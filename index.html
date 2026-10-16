@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RE/MAX Litorânea · Sistemas</title>
+<link rel="icon" type="image/x-icon" href="assets/LogoBalao.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --remax-red: #DC1C2E;
+    --remax-red-dark: #B5121F;
+    --remax-blue: #003DA5;
+    --remax-blue-dark: #002A75;
+    --remax-blue-deep: #001B4D;
+    --ink: #1B2333;
+    --muted: #5F6B80;
+    --line: #DCE2EE;
+    --bg: #F2F5FA;
+    --surface: #FFFFFF;
+
+    --header-h: 64px;
+    --side-w: 272px;
+    --side-w-collapsed: 76px;
+    --ease: cubic-bezier(.4, 0, .2, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Montserrat', 'Segoe UI', Roboto, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    overflow: hidden;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
+  :focus-visible { outline: 3px solid #6EA0FF; outline-offset: 2px; }
+
+  /* ───────── Cabeçalho ───────── */
+  .header {
+    position: fixed; inset: 0 0 auto 0;
+    height: var(--header-h);
+    background: var(--surface);
+    display: flex; align-items: center; gap: 16px;
+    padding: 0 20px 0 12px;
+    border-bottom: 1px solid var(--line);
+    z-index: 30;
+  }
+  .header::before {            /* faixa de marca no topo */
+    content: ""; position: absolute; inset: 0 0 auto 0; height: 4px;
+    background: linear-gradient(90deg, var(--remax-red) 0 50%, var(--remax-blue) 50% 100%);
+  }
+  .menu-toggle {
+    width: 44px; height: 44px; border-radius: 10px;
+    display: grid; place-items: center; color: var(--remax-blue);
+    transition: background .2s var(--ease);
+  }
+  .menu-toggle:hover { background: #E8EEF9; }
+  .menu-toggle svg { width: 24px; height: 24px; }
+
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none; color: inherit; margin-top: 4px;
+  }
+  .brand img { height: 50px; width: auto; display: block; }
+  .brand svg.balloon { height: 46px; width: auto; display: block; }
+  .brand-text { display: flex; flex-direction: column; line-height: 1; }
+  .brand-name { font-weight: 800; font-size: 25px; letter-spacing: -.5px; }
+  .brand-name .re  { color: var(--remax-red); }
+  .brand-name .sl  { color: var(--remax-red); margin: 0 1px; }
+  .brand-name .max { color: var(--remax-blue); }
+  .brand-sub {
+    margin-top: 4px; font-weight: 700; font-size: 11.5px;
+    letter-spacing: 3.1px; color: var(--remax-blue);
+  }
+  .header-title {
+    margin-left: auto; margin-top: 4px;
+    font-size: 14px; font-weight: 600; color: var(--muted);
+  }
+
+  /* ───────── Menu lateral ───────── */
+  .sidebar {
+    position: fixed; top: var(--header-h); bottom: 0; left: 0;
+    width: var(--side-w);
+    background: linear-gradient(180deg, var(--remax-blue) 0%, var(--remax-blue-dark) 100%);
+    color: #fff;
+    display: flex; flex-direction: column;
+    transition: width .28s var(--ease), transform .28s var(--ease);
+    z-index: 20;
+    overflow: hidden;
+  }
+  .side-label {
+    padding: 22px 28px 10px;
+    font-size: 12px; font-weight: 600; color: rgba(255,255,255,.62);
+    white-space: nowrap;
+    transition: opacity .2s var(--ease);
+  }
+  .nav { list-style: none; padding: 6px 12px; display: flex; flex-direction: column; gap: 4px; }
+  .nav-item {
+    position: relative;
+    width: 100%;
+    display: flex; align-items: center; gap: 16px;
+    padding: 0 16px; height: 52px;
+    border-radius: 10px;
+    text-align: left; white-space: nowrap;
+    color: rgba(255,255,255,.88);
+    font-weight: 600; font-size: 14.5px;
+    transition: background .2s var(--ease), color .2s var(--ease);
+  }
+  .nav-item:hover { background: rgba(255,255,255,.12); color: #fff; }
+  .nav-item svg { width: 24px; height: 24px; flex: none; }
+  .nav-item .txt { overflow: hidden; text-overflow: ellipsis; transition: opacity .2s var(--ease); }
+  .nav-item.active { background: #fff; color: var(--remax-blue); }
+  .nav-item.active::before {
+    content: ""; position: absolute; left: -12px; top: 8px; bottom: 8px; width: 5px;
+    background: var(--remax-red); border-radius: 0 4px 4px 0;
+  }
+
+  .side-foot {
+    margin-top: auto; padding: 16px 28px 20px;
+    font-size: 11.5px; color: rgba(255,255,255,.55); white-space: nowrap;
+    transition: opacity .2s var(--ease);
+  }
+
+  /* recolhido (desktop) */
+  body.collapsed .sidebar { width: var(--side-w-collapsed); }
+  body.collapsed .side-label,
+  body.collapsed .side-foot { opacity: 0; pointer-events: none; }
+  body.collapsed .nav-item .txt { display: none; }
+  body.collapsed .nav-item { padding: 0; justify-content: center; }
+  body.collapsed .nav-item.active::before { left: -12px; }
+
+  /* dica ao passar o mouse no menu recolhido */
+  .nav-item .tip {
+    position: absolute; left: calc(100% + 16px); top: 50%; transform: translateY(-50%);
+    background: var(--remax-blue-deep); color: #fff; font-size: 12.5px; font-weight: 600;
+    padding: 7px 11px; border-radius: 7px; white-space: nowrap;
+    opacity: 0; pointer-events: none; transition: opacity .15s var(--ease);
+    box-shadow: 0 4px 14px rgba(0,0,0,.25);
+  }
+  body.collapsed .nav-item:hover .tip { opacity: 1; }
+  .sidebar { overflow: visible; }
+  .sidebar > * { min-width: 0; }
+
+  /* ───────── Conteúdo ───────── */
+  .main {
+    position: fixed; top: var(--header-h); right: 0; bottom: 0;
+    left: var(--side-w);
+    transition: left .28s var(--ease);
+    display: flex; flex-direction: column;
+  }
+  body.collapsed .main { left: var(--side-w-collapsed); }
+
+  .view { display: none; flex: 1; min-height: 0; flex-direction: column; }
+  .view.show { display: flex; }
+
+  /* início */
+  .home { overflow-y: auto; padding: 40px 36px 48px; }
+  .home-inner { max-width: 980px; margin: 0 auto; }
+  .home h1 { font-size: 30px; font-weight: 800; letter-spacing: -.5px; color: var(--remax-blue); }
+  .home p.lead { margin-top: 8px; color: var(--muted); font-size: 15px; max-width: 56ch; line-height: 1.55; }
+  .cards { margin-top: 32px; display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+  .card {
+    text-align: left; background: var(--surface);
+    border: 1px solid var(--line); border-top: 5px solid var(--remax-blue);
+    border-radius: 12px; padding: 22px 22px 24px;
+    display: flex; flex-direction: column; gap: 12px;
+    transition: transform .2s var(--ease), box-shadow .2s var(--ease), border-top-color .2s var(--ease);
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,42,117,.14); border-top-color: var(--remax-red); }
+  .card .ico {
+    width: 46px; height: 46px; border-radius: 10px;
+    display: grid; place-items: center;
+    background: #E8EEF9; color: var(--remax-blue);
+  }
+  .card:hover .ico { background: #FDE8EA; color: var(--remax-red); }
+  .card .ico svg { width: 26px; height: 26px; }
+  .card h2 { font-size: 17px; font-weight: 700; }
+  .card p { font-size: 13.5px; line-height: 1.5; color: var(--muted); }
+
+  /* sistema carregado */
+  .toolbar {
+    flex: none; display: flex; align-items: center; gap: 14px;
+    padding: 0 20px; height: 48px;
+    background: var(--surface); border-bottom: 1px solid var(--line);
+  }
+  .toolbar h2 { font-size: 15px; font-weight: 700; color: var(--remax-blue); }
+  .toolbar .path { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .toolbar .spacer { margin-left: auto; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    height: 34px; padding: 0 14px; border-radius: 8px;
+    font-size: 13px; font-weight: 600;
+    border: 1.5px solid var(--remax-blue); color: var(--remax-blue);
+    background: transparent; text-decoration: none; white-space: nowrap;
+    transition: background .2s var(--ease), color .2s var(--ease);
+  }
+  .btn:hover { background: var(--remax-blue); color: #fff; }
+  .btn svg { width: 16px; height: 16px; }
+
+  .frame-wrap { position: relative; flex: 1; min-height: 0; background: var(--surface); }
+  .frame-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; }
+  .loading {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    background: var(--surface); transition: opacity .25s var(--ease);
+  }
+  .loading.done { opacity: 0; pointer-events: none; }
+  .spinner {
+    width: 38px; height: 38px; border-radius: 50%;
+    border: 4px solid #E1E7F3; border-top-color: var(--remax-red);
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* fundo escuro para o menu no celular */
+  .backdrop {
+    position: fixed; inset: var(--header-h) 0 0 0; background: rgba(0,16,48,.5);
+    opacity: 0; pointer-events: none; transition: opacity .28s var(--ease); z-index: 15;
+  }
+
+  /* ───────── Celular / tablet ───────── */
+  @media (max-width: 860px) {
+    .sidebar { transform: translateX(-100%); width: var(--side-w); box-shadow: 6px 0 24px rgba(0,0,0,.25); }
+    body.mobile-open .sidebar { transform: none; }
+    body.mobile-open .backdrop { opacity: 1; pointer-events: auto; }
+    .main, body.collapsed .main { left: 0; }
+    body.collapsed .sidebar { width: var(--side-w); }
+    body.collapsed .side-label, body.collapsed .side-foot { opacity: 1; pointer-events: auto; }
+    body.collapsed .nav-item .txt { display: inline; }
+    body.collapsed .nav-item:hover .tip { opacity: 0; }
+    body.collapsed .nav-item { padding: 0 16px; justify-content: flex-start; }
+    .header-title { display: none; }
+    .brand-name { font-size: 21px; }
+    .home { padding: 28px 18px 40px; }
+    .toolbar .path { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation-duration: 1.6s !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ───────── Cabeçalho ───────── -->
+<header class="header">
+  <button class="menu-toggle" id="menuToggle" aria-label="Recolher ou expandir menu" aria-expanded="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+
+  <a class="brand" href="#inicio" id="brandLink" aria-label="RE/MAX Litorânea — página inicial">
+    <span id="logoSlot"></span>
+  </a>
+
+  <div class="header-title" id="headerTitle">Sistemas da imobiliária</div>
+</header>
+
+<!-- ───────── Menu lateral ───────── -->
+<aside class="sidebar" id="sidebar" aria-label="Menu principal">
+  <div class="side-label">Sistemas</div>
+  <ul class="nav" id="nav"></ul>
+  <div class="side-foot">RE/MAX Litorânea</div>
+</aside>
+<div class="backdrop" id="backdrop"></div>
+
+<!-- ───────── Conteúdo ───────── -->
+<main class="main" id="main">
+  <section class="view home show" id="view-inicio" aria-label="Início">
+    <div class="home-inner">
+      <h1>Bem-vindo(a)</h1>
+      <p class="lead">Escolha um sistema no menu ao lado ou nos atalhos abaixo.</p>
+      <div class="cards" id="cards"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   CONFIGURAÇÃO
+   Para ADICIONAR um sistema novo no futuro, basta acrescentar um
+   item na lista SISTEMAS abaixo (e, se quiser, um ícone em ICONES).
+   ════════════════════════════════════════════════════════════════ */
+
+/* Logo do cabeçalho (arquivo oficial). Se o arquivo não for encontrado,
+   o portal usa automaticamente um logo desenhado no código. */
+const LOGO_URL = 'assets/LogoLitoranea.png';
+
+/* url = arquivo HTML de cada sistema (na mesma pasta deste index.html,
+   ou outro caminho/endereço). Ajuste os nomes para os seus arquivos. */
+const SISTEMAS = [
+  {
+    id: 'documentos',
+    nome: 'Gerador de Documentos',
+    desc: 'Gera em Word os contratos de locação e de compra e venda.',
+    url: 'documentos/index.html',
+    icone: 'documento'
+  },
+  {
+    id: 'vistoria',
+    nome: 'Sistema de Vistoria',
+    desc: 'Cria e importa laudos de vistoria de imóveis.',
+    url: 'vistoria/index.html',
+    icone: 'vistoria'
+  },
+  {
+    id: 'rateio',
+    nome: 'Rateio de Contas',
+    desc: 'Divide contas de consumo entre locador e locatário.',
+    url: 'rateio/index.html',
+    icone: 'calculadora'
+  }
+];
+
+const ICONES = {
+  documento:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg>',
+  vistoria:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="m9 13 2 2 4-4"/></svg>',
+  calculadora: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/></svg>',
+  generico:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>'
+};
+
+const ICONE_ABRIR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4 10 14"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>';
+
+/* Logo desenhado em código (balão + marca). Substitua por LOGO_URL se tiver o arquivo oficial. */
+const LOGO_PADRAO = `
+  <span style="display:flex;align-items:center;gap:10px">
+    <svg class="balloon" viewBox="0 0 44 64" aria-hidden="true">
+      <defs><clipPath id="env"><path d="M22 2C11 2 3 10.5 3 21c0 8 5 14.5 11 20h16c6-5.500 11-12 11-20C41 10.500 33 2 22 2z"/></clipPath></defs>
+      <g clip-path="url(#env)">
+        <rect x="0" y="0" width="44" height="17" fill="#DC1C2E"/>
+        <rect x="0" y="17" width="44" height="9" fill="#FFFFFF"/>
+        <rect x="0" y="26" width="44" height="22" fill="#003DA5"/>
+      </g>
+      <path d="M22 2C11 2 3 10.5 3 21c0 8 5 14.5 11 20h16c6-5.500 11-12 11-20C41 10.500 33 2 22 2z" fill="none" stroke="#C9D2E6" stroke-width="1"/>
+      <path d="M16 41l3 11M28 41l-3 11" stroke="#5F6B80" stroke-width="1.2"/>
+      <rect x="16" y="52" width="12" height="8" rx="1.500" fill="#003DA5"/>
+    </svg>
+    <span class="brand-text">
+      <span class="brand-name"><span class="re">RE</span><span class="sl">/</span><span class="max">MAX</span></span>
+      <span class="brand-sub">LITORÂNEA</span>
+    </span>
+  </span>`;
+
+/* ════════════════════════════════════════════════════════════════
+   LÓGICA
+   ════════════════════════════════════════════════════════════════ */
+const $ = (s) => document.querySelector(s);
+const body = document.body;
+const isMobile = () => window.matchMedia('(max-width: 860px)').matches;
+
+/* Logo */
+(function montarLogo() {
+  const slot = $('#logoSlot');
+  if (LOGO_URL) {
+    const img = new Image();
+    img.alt = 'RE/MAX Litorânea';
+    img.onerror = () => { slot.innerHTML = LOGO_PADRAO; };
+    img.src = LOGO_URL;
+    slot.appendChild(img);
+  } else {
+    slot.innerHTML = LOGO_PADRAO;
+  }
+})();
+
+/* Menu e atalhos */
+const nav = $('#nav');
+const cards = $('#cards');
+const main = $('#main');
+const views = {};          // id -> elemento da tela
+const frames = {};         // id -> true se o iframe já foi criado
+
+SISTEMAS.forEach((s) => {
+  const icone = ICONES[s.icone] || ICONES.generico;
+
+  const li = document.createElement('li');
+  li.innerHTML = `
+    <button class="nav-item" data-id="${s.id}" title="${s.nome}">
+      ${icone}
+      <span class="txt">${s.nome}</span>
+      <span class="tip">${s.nome}</span>
+    </button>`;
+  nav.appendChild(li);
+  li.firstElementChild.addEventListener('click', () => ir(s.id));
+
+  const card = document.createElement('button');
+  card.className = 'card';
+  card.innerHTML = `<span class="ico">${icone}</span><h2>${s.nome}</h2><p>${s.desc}</p>`;
+  card.addEventListener('click', () => ir(s.id));
+  cards.appendChild(card);
+
+  const view = document.createElement('section');
+  view.className = 'view';
+  view.id = 'view-' + s.id;
+  view.setAttribute('aria-label', s.nome);
+  view.innerHTML = `
+    <div class="toolbar">
+      <h2>${s.nome}</h2>
+      <span class="path">${s.url}</span>
+      <a class="btn spacer" href="${s.url}" target="_blank" rel="noopener">${ICONE_ABRIR} Abrir em nova aba</a>
+    </div>
+    <div class="frame-wrap"><div class="loading"><div class="spinner"></div></div></div>`;
+  main.appendChild(view);
+  views[s.id] = view;
+});
+views.inicio = $('#view-inicio');
+
+/* Navegação entre sistemas (os já abertos continuam carregados, sem perder o que foi preenchido) */
+function ir(id, { atualizaHash = true } = {}) {
+  const sistema = SISTEMAS.find((s) => s.id === id);
+  if (!sistema) id = 'inicio';
+
+  Object.entries(views).forEach(([k, v]) => v.classList.toggle('show', k === id));
+  document.querySelectorAll('.nav-item').forEach((b) => b.classList.toggle('active', b.dataset.id === id));
+
+  if (sistema && !frames[id]) {
+    const wrap = views[id].querySelector('.frame-wrap');
+    const loading = wrap.querySelector('.loading');
+    const iframe = document.createElement('iframe');
+    iframe.title = sistema.nome;
+    iframe.addEventListener('load', () => loading.classList.add('done'));
+    iframe.src = sistema.url;
+    wrap.insertBefore(iframe, loading);
+    frames[id] = true;
+  }
+
+  $('#headerTitle').textContent = sistema ? sistema.nome : 'Sistemas da imobiliária';
+  document.title = (sistema ? sistema.nome + ' · ' : '') + 'RE/MAX Litorânea';
+  if (atualizaHash && location.hash !== '#' + id) history.replaceState(null, '', '#' + id);
+  if (isMobile()) fecharMobile();
+}
+
+/* Recolher / expandir */
+const toggle = $('#menuToggle');
+function salvar(v) { try { localStorage.setItem('remax-menu-recolhido', v ? '1' : '0'); } catch (e) {} }
+function ler() { try { return localStorage.getItem('remax-menu-recolhido') === '1'; } catch (e) { return false; } }
+
+function fecharMobile() { body.classList.remove('mobile-open'); toggle.setAttribute('aria-expanded', 'false'); }
+
+toggle.addEventListener('click', () => {
+  if (isMobile()) {
+    const aberto = body.classList.toggle('mobile-open');
+    toggle.setAttribute('aria-expanded', String(aberto));
+  } else {
+    const recolhido = body.classList.toggle('collapsed');
+    toggle.setAttribute('aria-expanded', String(!recolhido));
+    salvar(recolhido);
+  }
+});
+$('#backdrop').addEventListener('click', fecharMobile);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') fecharMobile(); });
+
+if (!isMobile() && ler()) { body.classList.add('collapsed'); toggle.setAttribute('aria-expanded', 'false'); }
+if (isMobile()) toggle.setAttribute('aria-expanded', 'false');
+
+/* Rota inicial e botão voltar */
+function rota() { ir(location.hash.replace('#', '') || 'inicio', { atualizaHash: false }); }
+window.addEventListener('hashchange', rota);
+rota();
+</script>
+</body>
+</html>

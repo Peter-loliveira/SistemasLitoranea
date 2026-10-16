@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rateio de Conta de Consumo — RE/MAX Litorânea</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --remax-blue:#003DA5;
+    --remax-blue-dark:#00296E;
+    --remax-red:#DC1E35;
+    --bg:#F4F5F7;
+    --surface:#FFFFFF;
+    --ink:#1B1F27;
+    --ink-soft:#5E6470;
+    --line:#DFE2E8;
+    --line-soft:#EDEFF3;
+    --locador:var(--remax-blue);
+    --locador-bg:#E5EDF9;
+    --locatario:var(--remax-red);
+    --locatario-bg:#FBE6E9;
+    --danger:#B3412F;
+    --danger-bg:#F8E7E3;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .topbar{
+    background:var(--surface);
+    border-bottom:3px solid var(--remax-blue);
+  }
+  .topbar-inner{
+    max-width:880px;
+    margin:0 auto;
+    padding:18px 24px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .brandmark{
+    display:flex;
+    align-items:center;
+    gap:2px;
+    font-family:'Inter', sans-serif;
+    font-weight:700;
+    font-size:22px;
+    letter-spacing:-0.02em;
+    line-height:1;
+  }
+  .brandmark .re{ color:var(--remax-blue); }
+  .brandmark .slash{ color:var(--ink); font-weight:400; margin:0 1px; }
+  .brandmark .max{ color:var(--remax-red); }
+  .brand-sep{
+    width:1px;
+    height:22px;
+    background:var(--line);
+    margin:0 4px;
+  }
+  .brand-sub{
+    font-size:13px;
+    color:var(--ink-soft);
+    letter-spacing:0.02em;
+  }
+  .brand-sub strong{
+    color:var(--ink);
+    font-weight:600;
+  }
+
+  .wrap{
+    max-width:880px;
+    margin:0 auto;
+    padding:40px 24px 80px;
+  }
+  header{
+    margin-bottom:32px;
+  }
+  h1{
+    font-family:'Inter', sans-serif;
+    font-weight:700;
+    font-size:clamp(24px, 4vw, 32px);
+    margin:0 0 10px;
+    letter-spacing:-0.01em;
+  }
+  header p{
+    color:var(--ink-soft);
+    font-size:16px;
+    max-width:60ch;
+    margin:0;
+  }
+
+  .account-type{
+    display:flex;
+    gap:8px;
+    margin-bottom:28px;
+    flex-wrap:wrap;
+  }
+  .account-type button{
+    font-family:'Inter', sans-serif;
+    font-size:14px;
+    padding:9px 16px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:var(--surface);
+    color:var(--ink-soft);
+    cursor:pointer;
+    transition:border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .account-type button:hover{
+    border-color:#BEC3CC;
+  }
+  .account-type button.active{
+    background:var(--remax-blue);
+    color:#fff;
+    border-color:var(--remax-blue);
+  }
+
+  .timeline-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:28px 28px 24px;
+    margin-bottom:28px;
+  }
+  .timeline-labels{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-bottom:10px;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .timeline-labels span strong{
+    color:var(--ink);
+    font-weight:600;
+  }
+  .timeline-bar{
+    position:relative;
+    height:34px;
+    border-radius:8px;
+    overflow:hidden;
+    display:flex;
+    background:var(--line-soft);
+  }
+  .seg{
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    font-family:'IBM Plex Mono', monospace;
+    color:#fff;
+    white-space:nowrap;
+    overflow:hidden;
+    transition:width .25s ease;
+  }
+  .seg.locador{ background:var(--locador); }
+  .seg.locatario{ background:var(--locatario); }
+  .timeline-dates{
+    display:flex;
+    justify-content:space-between;
+    margin-top:14px;
+    font-size:12px;
+    font-family:'IBM Plex Mono', monospace;
+    color:var(--ink-soft);
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px;
+  }
+  @media (max-width:680px){
+    .grid{ grid-template-columns:1fr; }
+  }
+
+  .panel{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:28px;
+  }
+  .panel h2{
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:17px;
+    margin:0 0 20px;
+  }
+  .names-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin-bottom:22px;
+    padding-bottom:22px;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .field{
+    margin-bottom:18px;
+  }
+  .field:last-child{ margin-bottom:0; }
+  .field label{
+    display:block;
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+  }
+  .field label .dot{
+    display:inline-block;
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    margin-right:6px;
+    vertical-align:1px;
+  }
+  .field input{
+    width:100%;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:15px;
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:#FBFBFC;
+    color:var(--ink);
+  }
+  .field input[type="text"]{
+    font-family:'Inter', sans-serif;
+    font-size:14px;
+  }
+  .field input:focus{
+    outline:none;
+    border-color:var(--remax-blue);
+    background:#fff;
+  }
+  .value-input{
+    position:relative;
+  }
+  .value-input span{
+    position:absolute;
+    left:12px;
+    top:50%;
+    transform:translateY(-50%);
+    font-family:'IBM Plex Mono', monospace;
+    color:var(--ink-soft);
+    font-size:15px;
+    pointer-events:none;
+  }
+  .value-input input{
+    padding-left:34px;
+  }
+
+  .error-box{
+    display:none;
+    background:var(--danger-bg);
+    color:var(--danger);
+    border-radius:8px;
+    padding:12px 14px;
+    font-size:13px;
+    margin-bottom:18px;
+  }
+  .error-box.show{ display:block; }
+
+  .receipt{
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .receipt-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    padding:12px 0;
+    border-bottom:1px dashed var(--line);
+    font-size:13px;
+    gap:12px;
+  }
+  .receipt-row:last-of-type{
+    border-bottom:none;
+  }
+  .receipt-row .who{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-family:'Inter', sans-serif;
+    color:var(--ink-soft);
+    min-width:0;
+  }
+  .who .name{
+    color:var(--ink);
+    font-weight:500;
+  }
+  .dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    flex-shrink:0;
+  }
+  .dot.locador{ background:var(--locador); }
+  .dot.locatario{ background:var(--locatario); }
+  .receipt-row .amount{
+    font-size:17px;
+    font-weight:500;
+    color:var(--ink);
+    white-space:nowrap;
+  }
+  .receipt-total{
+    margin-top:8px;
+    padding-top:16px;
+    border-top:1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+  }
+  .receipt-total .label{
+    font-family:'Inter', sans-serif;
+    font-size:13px;
+    color:var(--ink-soft);
+  }
+  .receipt-total .amount{
+    font-size:21px;
+    font-weight:700;
+  }
+  .day-rate{
+    margin-top:18px;
+    font-size:12px;
+    color:var(--ink-soft);
+    font-family:'Inter', sans-serif;
+  }
+  .day-rate strong{
+    font-family:'IBM Plex Mono', monospace;
+    color:var(--ink);
+    font-weight:500;
+  }
+
+  footer{
+    margin-top:32px;
+    font-size:12px;
+    color:var(--ink-soft);
+    max-width:70ch;
+  }
+
+  .print-btn-row{
+    margin-top:28px;
+    display:flex;
+    justify-content:flex-end;
+  }
+  .print-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:'Inter', sans-serif;
+    font-size:14px;
+    font-weight:500;
+    padding:11px 20px;
+    border-radius:8px;
+    border:1px solid var(--remax-blue);
+    background:var(--remax-blue);
+    color:#fff;
+    cursor:pointer;
+  }
+  .print-btn:hover{
+    background:var(--remax-blue-dark);
+    border-color:var(--remax-blue-dark);
+  }
+
+  #printArea{ display:none; }
+
+  @media print{
+    @page{ size:auto; margin:14mm; }
+    *{
+      -webkit-print-color-adjust:exact !important;
+      print-color-adjust:exact !important;
+      color-adjust:exact !important;
+    }
+    body > *:not(#printArea){ display:none !important; }
+    #printArea, #printArea *{ visibility:visible; }
+    #printArea{
+      display:block;
+      width:100%;
+      margin:0;
+      font-family:'Inter', sans-serif;
+      color:#111;
+    }
+    .p-topbar{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      border-bottom:3px solid var(--remax-blue);
+      padding-bottom:12px;
+      margin-bottom:18px;
+    }
+    .p-brand{
+      font-weight:700;
+      font-size:20px;
+    }
+    .p-brand .re{ color:var(--remax-blue); }
+    .p-brand .max{ color:var(--remax-red); }
+    .p-sub{ font-size:12px; color:#555; }
+    .p-title{
+      font-size:17px;
+      font-weight:700;
+      margin:0 0 4px;
+    }
+    .p-account{
+      font-size:12px;
+      color:#555;
+      margin-bottom:18px;
+    }
+    .p-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px 24px;
+      font-size:12.5px;
+      margin-bottom:14px;
+      border:1px solid #ccc;
+      border-radius:6px;
+      padding:14px 16px;
+    }
+    .p-grid .k{ color:#555; }
+    .p-grid .v{ font-weight:500; text-align:right; }
+    .p-timeline-card{
+      border:1px solid #ccc;
+      border-radius:10px;
+      padding:16px 18px 14px;
+      margin-bottom:14px;
+    }
+    .p-timeline-labels{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      font-size:12px;
+      color:#555;
+      margin-bottom:10px;
+    }
+    .p-timeline-labels strong{
+      color:#111;
+      font-weight:700;
+    }
+    .p-timeline{
+      height:32px;
+      border-radius:8px;
+      overflow:hidden;
+      display:flex;
+      margin-bottom:10px;
+    }
+    .p-seg{
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:12px;
+      color:#fff;
+    }
+    .p-timeline-dates{
+      display:flex;
+      justify-content:space-between;
+      font-size:11px;
+      color:#555;
+    }
+    .p-result{
+      border:1px solid #ccc;
+      border-radius:6px;
+      padding:16px 18px;
+    }
+    .p-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:baseline;
+      padding:10px 0;
+      border-bottom:1px dashed #ccc;
+      font-size:13px;
+    }
+    .p-row:last-of-type{ border-bottom:none; }
+    .p-row .who{ display:flex; align-items:center; gap:8px; }
+    .p-dot{ width:8px; height:8px; border-radius:50%; }
+    .p-row .amt{ font-size:15px; font-weight:600; }
+    .p-total{
+      display:flex;
+      justify-content:space-between;
+      align-items:baseline;
+      border-top:1px solid #999;
+      margin-top:6px;
+      padding-top:12px;
+    }
+    .p-total .amt{ font-size:17px; font-weight:700; }
+    .p-footer{
+      margin-top:12px;
+      font-size:10.5px;
+      color:#777;
+    }
+    html, body{ height:auto !important; }
+    .p-grid, .p-timeline-card, .p-result{ page-break-inside:avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <span class="brandmark"><span class="re">RE</span><span class="slash">/</span><span class="max">MAX</span></span>
+    <span class="brand-sep"></span>
+    <span class="brand-sub"><strong>Litorânea</strong> · Imobiliária</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <header>
+    <h1>Rateio de conta de consumo</h1>
+    <p>Divida a conta de água ou energia entre locador e locatário na troca de inquilino, com base nas datas de leitura e na data de entrada.</p>
+  </header>
+
+  <div class="account-type" id="accountType">
+    <button data-name="Água" class="active">Água</button>
+    <button data-name="Luz">Luz</button>
+    <button data-name="Gás">Gás</button>
+    <button data-name="Internet">Internet</button>
+    <button data-name="Outros" data-custom="true">Outros</button>
+  </div>
+  <div class="field" id="customAccountField" style="display:none; max-width:320px; margin:-14px 0 28px;">
+    <label for="customAccountName">Nome da conta</label>
+    <input type="text" id="customAccountName" placeholder="Digite o nome da conta">
+  </div>
+
+  <div class="timeline-card">
+    <div class="timeline-labels">
+      <span>Período faturado: <strong id="lblTotalDays">—</strong></span>
+      <span id="lblEntryInfo" style="color:var(--ink-soft)"></span>
+    </div>
+    <div class="timeline-bar" id="timelineBar">
+      <div class="seg locador" id="segLocador" style="width:50%"></div>
+      <div class="seg locatario" id="segLocatario" style="width:50%"></div>
+    </div>
+    <div class="timeline-dates">
+      <span id="dateStart">—</span>
+      <span id="dateEnd">—</span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <h2>Dados da conta</h2>
+
+      <div class="error-box" id="errorBox"></div>
+
+      <div class="names-row">
+        <div class="field" style="margin-bottom:0;">
+          <label for="nomeLocador"><span class="dot locador"></span>Nome do locador</label>
+          <input type="text" id="nomeLocador" placeholder="Locador">
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label for="nomeLocatario"><span class="dot locatario"></span>Nome do locatário</label>
+          <input type="text" id="nomeLocatario" placeholder="Locatário">
+        </div>
+      </div>
+
+      <div class="field value-input">
+        <label for="valorConta">Valor total da conta</label>
+        <span>R$</span>
+        <input type="number" id="valorConta" inputmode="decimal" step="0.01" min="0" placeholder="0,00" value="150.00">
+      </div>
+
+      <div class="field">
+        <label for="dataInicial">Data da leitura inicial</label>
+        <input type="date" id="dataInicial">
+      </div>
+
+      <div class="field">
+        <label for="dataFinal">Data da leitura final</label>
+        <input type="date" id="dataFinal">
+      </div>
+
+      <div class="field">
+        <label for="dataEntrada">Data de entrada do locatário</label>
+        <input type="date" id="dataEntrada">
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Resultado do rateio</h2>
+      <div class="receipt" id="receipt">
+        <div class="receipt-row">
+          <span class="who"><span class="dot locador"></span><span class="name" id="labelLocador">Locador</span> · <span id="daysLocador">0</span> dias</span>
+          <span class="amount" id="valorLocador">R$ 0,00</span>
+        </div>
+        <div class="receipt-row">
+          <span class="who"><span class="dot locatario"></span><span class="name" id="labelLocatario">Locatário</span> · <span id="daysLocatario">0</span> dias</span>
+          <span class="amount" id="valorLocatario">R$ 0,00</span>
+        </div>
+        <div class="receipt-total">
+          <span class="label">Total da conta</span>
+          <span class="amount" id="valorTotalOut">R$ 0,00</span>
+        </div>
+      </div>
+      <div class="day-rate" id="dayRateLine"></div>
+    </div>
+  </div>
+
+  <footer>
+    O valor diário é obtido dividindo o valor total pelo número de dias entre as duas leituras. Os dias anteriores à entrada do locatário são atribuídos ao locador; a partir da data de entrada (inclusive), os dias são atribuídos ao locatário.
+  </footer>
+
+  <div class="print-btn-row">
+    <button class="print-btn" id="printBtn" type="button">Imprimir resultado</button>
+  </div>
+
+</div>
+
+<div id="printArea">
+  <div class="p-topbar">
+    <span class="p-brand"><span class="re">RE</span>/<span class="max">MAX</span></span>
+    <span class="p-sub">Litorânea · Imobiliária</span>
+  </div>
+  <p class="p-title">Rateio de conta de consumo</p>
+  <p class="p-account" id="pAccountType">Coelba (energia)</p>
+
+  <div class="p-grid">
+    <span class="k">Locador</span><span class="v" id="pNomeLocador">Locador</span>
+    <span class="k">Locatário</span><span class="v" id="pNomeLocatario">Locatário</span>
+    <span class="k">Leitura inicial</span><span class="v" id="pDateStart">—</span>
+    <span class="k">Leitura final</span><span class="v" id="pDateEnd">—</span>
+    <span class="k">Entrada do locatário</span><span class="v" id="pDateEntrada">—</span>
+    <span class="k">Valor total da conta</span><span class="v" id="pValorTotal">R$ 0,00</span>
+  </div>
+
+  <div class="p-timeline-card">
+    <div class="p-timeline-labels">
+      <span>Período faturado: <strong id="pLblTotalDays">—</strong></span>
+      <span id="pLblEntryInfo"></span>
+    </div>
+    <div class="p-timeline">
+      <div class="p-seg" id="pSegLocador" style="width:50%; background:var(--remax-blue);"></div>
+      <div class="p-seg" id="pSegLocatario" style="width:50%; background:var(--remax-red);"></div>
+    </div>
+    <div class="p-timeline-dates">
+      <span id="pTimelineStart">—</span>
+      <span id="pTimelineEnd">—</span>
+    </div>
+  </div>
+
+  <div class="p-result">
+    <div class="p-row">
+      <span class="who"><span class="p-dot" style="background:var(--remax-blue)"></span><span id="pLabelLocador">Locador</span> · <span id="pDaysLocador">0</span> dias</span>
+      <span class="amt" id="pValorLocador">R$ 0,00</span>
+    </div>
+    <div class="p-row">
+      <span class="who"><span class="p-dot" style="background:var(--remax-red)"></span><span id="pLabelLocatario">Locatário</span> · <span id="pDaysLocatario">0</span> dias</span>
+      <span class="amt" id="pValorLocatario">R$ 0,00</span>
+    </div>
+    <div class="p-total">
+      <span>Total da conta</span>
+      <span class="amt" id="pValorTotalOut">R$ 0,00</span>
+    </div>
+  </div>
+
+  <p class="p-footer" id="pDayRateLine"></p>
+</div>
+
+<script>
+(function(){
+  const els = {
+    nomeLocador: document.getElementById('nomeLocador'),
+    nomeLocatario: document.getElementById('nomeLocatario'),
+    labelLocador: document.getElementById('labelLocador'),
+    labelLocatario: document.getElementById('labelLocatario'),
+    valor: document.getElementById('valorConta'),
+    inicial: document.getElementById('dataInicial'),
+    final: document.getElementById('dataFinal'),
+    entrada: document.getElementById('dataEntrada'),
+    errorBox: document.getElementById('errorBox'),
+    segLocador: document.getElementById('segLocador'),
+    segLocatario: document.getElementById('segLocatario'),
+    lblTotalDays: document.getElementById('lblTotalDays'),
+    lblEntryInfo: document.getElementById('lblEntryInfo'),
+    dateStart: document.getElementById('dateStart'),
+    dateEnd: document.getElementById('dateEnd'),
+    daysLocador: document.getElementById('daysLocador'),
+    daysLocatario: document.getElementById('daysLocatario'),
+    valorLocador: document.getElementById('valorLocador'),
+    valorLocatario: document.getElementById('valorLocatario'),
+    valorTotalOut: document.getElementById('valorTotalOut'),
+    dayRateLine: document.getElementById('dayRateLine'),
+    accountButtons: document.querySelectorAll('#accountType button'),
+    customAccountField: document.getElementById('customAccountField'),
+    customAccountName: document.getElementById('customAccountName'),
+    printBtn: document.getElementById('printBtn'),
+    pAccountType: document.getElementById('pAccountType'),
+    pNomeLocador: document.getElementById('pNomeLocador'),
+    pNomeLocatario: document.getElementById('pNomeLocatario'),
+    pDateStart: document.getElementById('pDateStart'),
+    pDateEnd: document.getElementById('pDateEnd'),
+    pDateEntrada: document.getElementById('pDateEntrada'),
+    pValorTotal: document.getElementById('pValorTotal'),
+    pSegLocador: document.getElementById('pSegLocador'),
+    pSegLocatario: document.getElementById('pSegLocatario'),
+    pLblTotalDays: document.getElementById('pLblTotalDays'),
+    pLblEntryInfo: document.getElementById('pLblEntryInfo'),
+    pTimelineStart: document.getElementById('pTimelineStart'),
+    pTimelineEnd: document.getElementById('pTimelineEnd'),
+    pLabelLocador: document.getElementById('pLabelLocador'),
+    pLabelLocatario: document.getElementById('pLabelLocatario'),
+    pDaysLocador: document.getElementById('pDaysLocador'),
+    pDaysLocatario: document.getElementById('pDaysLocatario'),
+    pValorLocador: document.getElementById('pValorLocador'),
+    pValorLocatario: document.getElementById('pValorLocatario'),
+    pValorTotalOut: document.getElementById('pValorTotalOut'),
+    pDayRateLine: document.getElementById('pDayRateLine')
+  };
+
+  const brl = new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'});
+  const dfmt = new Intl.DateTimeFormat('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric'});
+  const MS_DAY = 86400000;
+
+  function parseDate(str){
+    if(!str) return null;
+    const [y,m,d] = str.split('-').map(Number);
+    return new Date(Date.UTC(y, m-1, d));
+  }
+
+  function diffDays(a,b){
+    return Math.round((b - a) / MS_DAY);
+  }
+
+  function setError(msg){
+    if(msg){
+      els.errorBox.textContent = msg;
+      els.errorBox.classList.add('show');
+    } else {
+      els.errorBox.classList.remove('show');
+    }
+  }
+
+  function setDefaults(){
+    const today = new Date();
+    const iniD = new Date(today); iniD.setMonth(iniD.getMonth()-1);
+    const fmt = d => d.toISOString().slice(0,10);
+    els.inicial.value = fmt(iniD);
+    els.final.value = fmt(today);
+    const meio = new Date(iniD.getTime() + (today - iniD)/2);
+    els.entrada.value = fmt(meio);
+  }
+
+  function updateNames(){
+    els.labelLocador.textContent = els.nomeLocador.value.trim() || 'Locador';
+    els.labelLocatario.textContent = els.nomeLocatario.value.trim() || 'Locatário';
+  }
+
+  function calculate(){
+    updateNames();
+
+    const valorTotal = parseFloat(els.valor.value);
+    const dIni = parseDate(els.inicial.value);
+    const dFim = parseDate(els.final.value);
+    const dEnt = parseDate(els.entrada.value);
+
+    if(!dIni || !dFim){
+      setError('Informe a data da leitura inicial e a data da leitura final.');
+      return;
+    }
+    const totalDays = diffDays(dIni, dFim);
+    if(totalDays <= 0){
+      setError('A data da leitura final deve ser posterior à data da leitura inicial.');
+      return;
+    }
+    if(isNaN(valorTotal) || valorTotal < 0){
+      setError('Informe o valor total da conta.');
+      return;
+    }
+    if(!dEnt){
+      setError('Informe a data de entrada do locatário.');
+      return;
+    }
+    setError(null);
+
+    let daysLocador, daysLocatario, entryNote;
+    if(dEnt <= dIni){
+      daysLocador = 0;
+      daysLocatario = totalDays;
+      entryNote = 'Locatário já ocupava o imóvel no início do período.';
+    } else if(dEnt >= dFim){
+      daysLocador = totalDays;
+      daysLocatario = 0;
+      entryNote = 'Locatário entra depois do fim do período — conta é do locador.';
+    } else {
+      daysLocador = diffDays(dIni, dEnt);
+      daysLocatario = totalDays - daysLocador;
+      entryNote = 'Entrada em ' + dfmt.format(dEnt) + ', dia ' + (daysLocador+1) + ' do período.';
+    }
+
+    const dailyRate = valorTotal / totalDays;
+    let valorLocador = Math.round(dailyRate * daysLocador * 100) / 100;
+    let valorLocatario = Math.round((valorTotal - valorLocador) * 100) / 100;
+
+    els.lblTotalDays.textContent = totalDays + (totalDays === 1 ? ' dia' : ' dias');
+    els.lblEntryInfo.textContent = entryNote;
+    els.dateStart.textContent = dfmt.format(dIni);
+    els.dateEnd.textContent = dfmt.format(dFim);
+
+    const pctLocador = totalDays ? (daysLocador/totalDays*100) : 0;
+    const pctLocatario = 100 - pctLocador;
+    els.segLocador.style.width = pctLocador + '%';
+    els.segLocatario.style.width = pctLocatario + '%';
+    els.segLocador.textContent = pctLocador >= 12 ? daysLocador + 'd' : '';
+    els.segLocatario.textContent = pctLocatario >= 12 ? daysLocatario + 'd' : '';
+
+    els.daysLocador.textContent = daysLocador;
+    els.daysLocatario.textContent = daysLocatario;
+    els.valorLocador.textContent = brl.format(valorLocador);
+    els.valorLocatario.textContent = brl.format(valorLocatario);
+    els.valorTotalOut.textContent = brl.format(valorTotal);
+    els.dayRateLine.innerHTML = 'Valor por dia: <strong>' + brl.format(dailyRate) + '</strong> · ' + totalDays + ' dias no período faturado';
+
+    const activeBtn = document.querySelector('#accountType button.active');
+    let accountLabel = activeBtn ? activeBtn.getAttribute('data-name') : 'Conta de consumo';
+    if(activeBtn && activeBtn.getAttribute('data-custom') === 'true'){
+      accountLabel = els.customAccountName.value.trim() || 'Outros';
+    }
+    els.pAccountType.textContent = accountLabel;
+    els.pNomeLocador.textContent = els.labelLocador.textContent;
+    els.pNomeLocatario.textContent = els.labelLocatario.textContent;
+    els.pDateStart.textContent = dfmt.format(dIni);
+    els.pDateEnd.textContent = dfmt.format(dFim);
+    els.pDateEntrada.textContent = dfmt.format(dEnt);
+    els.pValorTotal.textContent = brl.format(valorTotal);
+    els.pSegLocador.style.width = pctLocador + '%';
+    els.pSegLocatario.style.width = pctLocatario + '%';
+    els.pSegLocador.textContent = pctLocador >= 12 ? daysLocador + 'd' : '';
+    els.pSegLocatario.textContent = pctLocatario >= 12 ? daysLocatario + 'd' : '';
+    els.pLblTotalDays.textContent = totalDays + (totalDays === 1 ? ' dia' : ' dias');
+    els.pLblEntryInfo.textContent = entryNote;
+    els.pTimelineStart.textContent = dfmt.format(dIni);
+    els.pTimelineEnd.textContent = dfmt.format(dFim);
+    els.pLabelLocador.textContent = els.labelLocador.textContent;
+    els.pLabelLocatario.textContent = els.labelLocatario.textContent;
+    els.pDaysLocador.textContent = daysLocador;
+    els.pDaysLocatario.textContent = daysLocatario;
+    els.pValorLocador.textContent = brl.format(valorLocador);
+    els.pValorLocatario.textContent = brl.format(valorLocatario);
+    els.pValorTotalOut.textContent = brl.format(valorTotal);
+    els.pDayRateLine.textContent = 'Valor por dia: ' + brl.format(dailyRate) + ' · ' + totalDays + ' dias no período faturado';
+  }
+
+  [els.nomeLocador, els.nomeLocatario, els.valor, els.inicial, els.final, els.entrada].forEach(el => {
+    el.addEventListener('input', calculate);
+  });
+
+  els.accountButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      els.accountButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const isCustom = btn.getAttribute('data-custom') === 'true';
+      els.customAccountField.style.display = isCustom ? 'block' : 'none';
+      calculate();
+    });
+  });
+
+  els.customAccountName.addEventListener('input', calculate);
+
+  els.printBtn.addEventListener('click', () => {
+    calculate();
+    window.print();
+  });
+
+  setDefaults();
+  calculate();
+})();
+</script>
+</body>
+</html>

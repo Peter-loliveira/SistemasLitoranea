@@ -1,0 +1,2749 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laudo de Vistoria</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="assets/LogoBalao.ico">
+    <style>
+        /* Variáveis de Cor RE/MAX */
+        :root {
+            --remax-blue: #003da5;
+            --remax-red: #e60e16;
+            --remax-light-gray: #cccccc;
+            --remax-medium-gray: #bbbbbb;
+            --remax-dark-gray: #aaaaaa;
+        }
+
+        /* Estilos Gerais */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--remax-light-gray);
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            flex-grow: 1;
+        }
+
+        /* Container do logo do cabeçalho */
+        .header-logo-container {
+            width: 100%;
+            max-width: 100%;
+            background-color: #f9f9f9;
+            border-bottom: 3px solid var(--remax-blue);
+            border-radius: 5px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .header-logo {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+            margin: 0 auto;
+        }
+
+        /* Título do formulário */
+        h1 {
+            color: var(--remax-blue);
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            border-bottom: 3px solid var(--remax-blue);
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            font-size: 1.8rem;
+        }
+
+        h2 {
+            color: var(--remax-blue);
+            margin-top: 35px;
+            border-bottom: 1px solid var(--remax-medium-gray);
+            padding-bottom: 10px;
+            text-align: center;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input,
+        input::placeholder,
+        textarea,
+        textarea::placeholder,
+        select {
+            font-size: 1rem;
+            color: #333;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input {
+            -moz-appearance: textfield;
+        }
+
+        input::-ms-clear {
+            display: none;
+        }
+
+        input::-ms-reveal {
+            display: none;
+        }
+
+        input,
+        input::-webkit-input-placeholder,
+        textarea,
+        textarea::-webkit-input-placeholder,
+        select {
+            opacity: 1;
+        }
+
+        input::-moz-placeholder,
+        textarea::-moz-placeholder,
+        select::-moz-placeholder {
+            color: #777;
+            opacity: 1;
+        }
+
+        input:-ms-input-placeholder,
+        textarea:-ms-input-placeholder,
+        select:-ms-input-placeholder {
+            color: #777;
+            opacity: 1;
+        }
+
+        input::placeholder,
+        textarea::placeholder,
+        select::placeholder {
+            color: #777;
+            opacity: 1;
+        }
+
+        input:focus::-webkit-input-placeholder {
+            color: transparent;
+        }
+
+        textarea:focus::-webkit-input-placeholder {
+            color: transparent;
+        }
+
+        select:focus::-webkit-input-placeholder {
+            color: transparent;
+        }
+
+        input:focus::-moz-placeholder {
+            color: transparent;
+        }
+
+        textarea:focus::-moz-placeholder {
+            color: transparent;
+        }
+
+        select:focus::-moz-placeholder {
+            color: transparent;
+        }
+
+        input:focus:-ms-input-placeholder {
+            color: transparent;
+        }
+
+        textarea:focus:-ms-input-placeholder,
+        select:focus:-ms-input-placeholder {
+            color: transparent;
+        }
+
+        input:focus::placeholder {
+            color: transparent;
+        }
+
+        textarea:focus::placeholder {
+            color: transparent;
+        }
+
+        select:focus::placeholder {
+            color: transparent;
+        }
+
+        input,
+        input::-webkit-input-placeholder,
+        textarea,
+        textarea::-webkit-input-placeholder,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--remax-medium-gray);
+            border-radius: 5px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--remax-blue);
+            box-shadow: 0 0 5px rgba(0, 61, 165, 0.5);
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Layout Específico: Estado do Imóvel */
+        .form-group.estado-imovel {
+            flex-direction: row;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-group.estado-imovel label {
+            margin-bottom: 0;
+            flex-shrink: 0;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 0;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-weight: normal;
+            color: #555;
+            transition: color 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .radio-group input {
+            margin-right: 8px;
+            width: auto;
+        }
+
+        .radio-group input:checked+span {
+            color: var(--remax-blue);
+            font-weight: bold;
+        }
+
+        /* Botões */
+        .button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background-color 0.3s ease;
+            height: 40px;
+            min-height: 40px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .button.icon-only {
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            gap: 0;
+        }
+
+        .button .material-icons {
+            font-size: 1.5rem;
+        }
+
+        .primary-button {
+            background-color: var(--remax-blue);
+            color: #fff;
+        }
+
+        .primary-button:hover {
+            background-color: #3366bb;
+        }
+
+        .delete-button {
+            background-color: var(--remax-red);
+            color: #fff;
+        }
+
+        .delete-button:hover {
+            background-color: #ff4d4d;
+        }
+
+        .pdf-button {
+            background-color: var(--remax-red);
+            color: #fff;
+            width: 100%;
+        }
+
+        .pdf-button:hover {
+            background-color: #ff4d4d;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .input-with-buttons .action-buttons .button {
+            flex-grow: 0;
+            max-width: none;
+        }
+
+        .action-buttons .button {
+            flex-grow: 1;
+            max-width: 200px;
+        }
+
+        /* Novo estilo para blocos de informação */
+        .info-block {
+            border: 1px solid var(--remax-medium-gray);
+            border-radius: 8px;
+            padding: 0px 20px 20px 20px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            background-color: #fcfcfc;
+        }
+
+        .info-block h3 {
+            text-align: center;
+            color: var(--remax-blue);
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-block .form-group {
+            margin-bottom: 15px;
+        }
+
+        .info-block .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Estilos para agrupar campos lado a lado */
+        .form-group-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 18px;
+        }
+
+        .form-group-row .form-group {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 0;
+        }
+
+        .form-group-row .form-group label {
+            text-align: center;
+            width: 100%;
+        }
+
+        /* NOVOS ESTILOS PARA CARDS DE FOTOS */
+        .photo-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+            /* DESCE OS BOTÕES */
+        }
+
+        .photo-section-header h2 {
+            margin: 0;
+            border: none;
+            padding: 0;
+            text-align: left;
+        }
+
+        .photo-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .photo-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: 2px solid var(--remax-blue);
+            background-color: #fff;
+            color: var(--remax-blue);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .photo-btn:hover {
+            background-color: var(--remax-blue);
+            color: #fff;
+        }
+
+        .photo-btn .material-icons {
+            font-size: 20px;
+        }
+
+        /* Container de cards */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        /* Card individual */
+        .photo-card {
+            background: #fff;
+            border: 1px solid var(--remax-medium-gray);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 320px;
+            /* REDUZIDO de 350px para 320px */
+            max-height: 320px;
+            /* GARANTE altura máxima */
+        }
+
+        .photo-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .photo-card-image {
+            width: 100%;
+            height: 180px;
+            max-height: 180px;
+            object-fit: scale-down;
+            /* REDUZ proporcionalmente se for maior, não amplia se for menor */
+            object-position: center;
+            background-color: #f0f0f0;
+            flex-shrink: 0;
+            display: block;
+            padding: 5px;
+        }
+
+        .photo-card-content {
+            padding: 12px;
+            /* REDUZIDO de 15px para 12px */
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            /* REDUZIDO de 10px para 8px */
+            overflow: hidden;
+            min-height: 0;
+            /* PERMITE que o conteúdo encolha */
+        }
+
+        .photo-card-textarea {
+            width: 100%;
+            flex-grow: 1;
+            min-height: 70px;
+            /* REDUZIDO de 60px para 50px */
+            max-height: 80px;
+            /* LIMITA altura máxima */
+            padding: 8px;
+            /* REDUZIDO de 10px para 8px */
+            border: 1px solid var(--remax-medium-gray);
+            border-radius: 6px;
+            resize: none;
+            font-family: 'Roboto', sans-serif;
+            font-size: 0.9rem;
+            /* REDUZIDO de 0.95rem */
+            box-sizing: border-box;
+        }
+
+
+        .photo-card-textarea:focus {
+            border-color: var(--remax-blue);
+            outline: none;
+            box-shadow: 0 0 3px rgba(0, 61, 165, 0.3);
+        }
+
+        .photo-card-delete {
+            align-self: flex-end;
+            background-color: transparent;
+            /* Fundo transparente */
+            color: var(--remax-red);
+            /* Ícone vermelho */
+            border: none;
+            padding: 8px;
+            border-radius: 50%;
+            /* Circular */
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            flex-shrink: 0;
+            margin-top: auto;
+            width: 40px;
+            height: 40px;
+        }
+
+        .photo-card-delete:hover {
+            background-color: rgba(230, 14, 22, 0.1);
+            /* Fundo vermelho bem sutil */
+            transform: scale(1.1);
+        }
+
+        .photo-card-delete:active {
+            transform: scale(0.95);
+        }
+
+        .photo-card-delete .material-icons {
+            font-size: 24px;
+            /* Ícone maior */
+        }
+
+        /* Mensagem quando não há fotos */
+        .no-photos-message {
+            text-align: center;
+            color: #777;
+            padding: 40px 20px;
+            font-style: italic;
+            grid-column: 1 / -1;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border: 2px dashed var(--remax-medium-gray);
+        }
+
+        .no-photos-message .material-icons {
+            font-size: 48px;
+            color: var(--remax-medium-gray);
+            margin-bottom: 10px;
+        }
+
+        /* Modal da Câmera */
+        .camera-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .camera-modal-content {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.4);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .camera-modal-content h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: var(--remax-blue);
+        }
+
+        .camera-modal-content video {
+            width: 100%;
+            max-height: 400px;
+            background-color: #000;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            object-fit: contain;
+        }
+
+        .camera-modal-content canvas {
+            display: none;
+        }
+
+        .camera-modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .camera-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .camera-modal-close:hover,
+        .camera-modal-close:focus {
+            color: var(--remax-red);
+        }
+
+        .camera-error-message {
+            color: var(--remax-red);
+            margin-top: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                margin: 10px auto;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+                margin-left: -20px;
+                margin-right: -20px;
+                padding: 15px;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+            }
+
+            .form-group.estado-imovel,
+            .form-group-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .form-group-row .form-group {
+                min-width: 100%;
+            }
+
+            .radio-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .action-buttons .button {
+                max-width: 100%;
+            }
+
+            .action-buttons .button.icon-only {
+                max-width: 40px;
+            }
+
+            .info-block {
+                padding: 15px;
+            }
+
+            /* Cards responsivos */
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+
+            .photo-section-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+                flex-wrap: wrap;
+                gap: 10px;
+                padding-top: 15px;
+                /* ESPAÇO ACIMA DOS BOTÕES */
+            }
+
+            .photo-section-header h2 {
+                text-align: center;
+            }
+
+            .photo-actions {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.3rem;
+                margin-left: -15px;
+                margin-right: -15px;
+                padding: 12px;
+            }
+
+            h2 {
+                font-size: 1.2rem;
+            }
+
+            .camera-modal-content {
+                padding: 15px;
+            }
+
+            .photo-btn {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+        .button-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 0;
+            flex-wrap: wrap;
+            padding: 10px 0;
+        }
+
+        .button-container .button {
+            min-width: 200px;
+            flex: 1 1 auto;
+            max-width: 250px;
+            vertical-align: middle;
+            line-height: 1;
+        }
+
+        .save-photos-button {
+            background-color: #f4b42d;
+            color: #000;
+        }
+
+        .save-photos-button:hover {
+            background-color: #f5c04d;
+        }
+
+        .ConditionButtons {
+            display: flex;
+            gap: 12px;
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .ConditionButtons button {
+            min-width: 100px;
+            height: 40px;
+            background-color: #ffffff;
+            border: 3px solid;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .ConditionButtons button[data-condition="novo"] {
+            border-color: #9b59b6;
+            color: #9b59b6;
+        }
+
+        .ConditionButtons button[data-condition="novo"]:hover {
+            background-color: #f3e5f5;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(155, 89, 182, 0.3);
+        }
+
+        .ConditionButtons button[data-condition="novo"].active {
+            background-color: #9b59b6;
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(155, 89, 182, 0.5);
+        }
+
+        .ConditionButtons button[data-condition="excelente"] {
+            border-color: #6b67e1;
+            color: #6b67e1;
+        }
+
+        .ConditionButtons button[data-condition="excelente"]:hover {
+            background-color: #e8f5e9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(39, 174, 96, 0.3);
+        }
+
+        .ConditionButtons button[data-condition="excelente"].active {
+            background-color: #6b67e1;
+            color: #ffffff;
+            box-shadow: 0 4px 15px #6b67e1;
+        }
+
+        .ConditionButtons button[data-condition="bom"] {
+            border-color: #2ecc71;
+            color: #2ecc71;
+        }
+
+        .ConditionButtons button[data-condition="bom"]:hover {
+            background-color: #e8f8f5;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 204, 113, 0.3);
+        }
+
+        .ConditionButtons button[data-condition="bom"].active {
+            background-color: #2ecc71;
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.5);
+        }
+
+        .ConditionButtons button[data-condition="regular"] {
+            border-color: #f39c12;
+            color: #f39c12;
+        }
+
+        .ConditionButtons button[data-condition="regular"]:hover {
+            background-color: #fef5e7;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(243, 156, 18, 0.3);
+        }
+
+        .ConditionButtons button[data-condition="regular"].active {
+            background-color: #f39c12;
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.5);
+        }
+
+        .ConditionButtons button[data-condition="ruim"] {
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+
+        .ConditionButtons button[data-condition="ruim"]:hover {
+            background-color: #fdedec;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(231, 76, 60, 0.3);
+        }
+
+        .ConditionButtons button[data-condition="ruim"].active {
+            background-color: #e74c3c;
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.5);
+        }
+
+        .ConditionButtons button:active {
+            transform: scale(0.95);
+        }
+
+        @media (max-width: 768px) {
+            .ConditionButtons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .ConditionButtons button {
+                min-width: 120px;
+                height: 50px;
+                font-size: 12px;
+            }
+        }
+
+        .TextoEstadoImovel {
+            margin-top: 1%;
+        }
+    </style>
+    <base target="_blank">
+    <base target="_blank">
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header-logo-container">
+            <img src="assets/Logo.png" alt="RE/MAX Litorânea - Vistoria de Imóveis" class="header-logo">
+        </div>
+
+        <div class="info-block" style="margin-top: 20px;">
+            <div class="form-section" style="margin-bottom: 0;">
+                <div class="button-container">
+                    <button type="button" class="button pdf-button" id="importVistoriaButton">
+                        <span class="material-icons">upload_file</span> Importar Vistoria
+                    </button>
+                </div>
+                <input type="file" id="importVistoriaInput" accept="application/pdf" style="display: none;">
+            </div>
+        </div>
+
+        <form id="inspectionForm">
+            <!-- Tipo de Vistoria -->
+            <div class="info-block">
+                <div class="form-section">
+                    <h2>Tipo de Vistoria</h2>
+                    <div class="form-group">
+                        <div class="radio-group">
+                            <label><input type="radio" name="reportType" value="Inicial" required>
+                                <span>Inicial</span></label>
+                            <label><input type="radio" name="reportType" value="Final"> <span>Final</span></label>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 15px; display: flex;">
+                        <label
+                            style="display: flex; align-items: center; gap: 8px; font-weight: normal; text-transform: none; cursor: pointer; font-size: 1rem; justify-content: center;">
+                            <input type="checkbox" id="vistoriaComplementar" name="vistoriaComplementar"
+                                style="width: auto;">
+                            <span>Vistoria Complementar</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informações do Laudo -->
+            <div class="info-block">
+                <div class="form-section">
+                    <h2>Informações do Laudo</h2>
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="estadoSelect">Estado:</label>
+                            <select id="estadoSelect" name="estadoSelect" required>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="municipioSelect">Município:</label>
+                            <select id="municipioSelect" name="municipioSelect" required>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="contractDate">Data do Contrato:</label>
+                        <input type="date" id="contractDate" name="contractDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reportDate">Data do Laudo:</label>
+                        <input type="date" id="reportDate" name="reportDate" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informações do Corretor -->
+            <div class="info-block">
+                <div class="form-section">
+                    <h2>Informações do Corretor</h2>
+                    <div class="form-group">
+                        <label for="brokerName">Corretor(a):</label>
+                        <input type="text" id="brokerName" name="brokerName" required>
+                    </div>
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="creci">CRECI:</label>
+                            <input type="text" id="creci" name="creci" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cpf">CPF:</label>
+                            <input type="text" id="cpf" name="cpf" maxlength="14" placeholder="XXX.XXX.XXX-XX" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informações do Imóvel -->
+            <div class="info-block">
+                <div class="form-section">
+                    <h2>Informações do Imóvel</h2>
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="landlord">Locador:</label>
+                            <input type="text" id="landlord" name="landlord" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tenant">Locatário:</label>
+                            <input type="text" id="tenant" name="tenant" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="propertyAddress">Endereço do Imóvel:</label>
+                        <textarea id="propertyAddress" name="propertyAddress" required
+                            placeholder="Endereço completo do imóvel"></textarea>
+                    </div>
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="propertyType">Tipo de Imóvel:</label>
+                            <select id="propertyType" name="propertyType" required>
+                                <option value="">Selecione</option>
+                                <option value="Apartamento">Apartamento</option>
+                                <option value="Casa">Casa</option>
+                                <option value="Casa de Condominio">Casa de Condominio</option>
+                                <option value="Terreno">Terreno</option>
+                                <option value="Sala Comercial">Sala Comercial</option>
+                                <option value="Sitio">Sitio</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="destination">Destinação:</label>
+                            <select id="destination" name="destination" required>
+                                <option value="">Selecione</option>
+                                <option value="Residencial">Residencial</option>
+                                <option value="Aluguel">Aluguel</option>
+                                <option value="Aluguel de Temporada">Aluguel de Temporada</option>
+                                <option value="Comercial">Comercial</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group estado-imovel">
+                        <div class="ConditionButtons">
+                            <label class="TextoEstadoImovel">Estado do Imóvel:</label>
+                            <button type="button" data-condition="novo" onclick="selectCondition(this)">NOVO</button>
+                            <button type="button" data-condition="excelente"
+                                onclick="selectCondition(this)">EXCELENTE</button>
+                            <button type="button" data-condition="bom" onclick="selectCondition(this)">BOM</button>
+                            <button type="button" data-condition="regular"
+                                onclick="selectCondition(this)">REGULAR</button>
+                            <button type="button" data-condition="ruim" onclick="selectCondition(this)">RUIM</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Itens da Vistoria - NOVO LAYOUT COM CARDS -->
+            <div class="info-block">
+                <div class="form-section">
+                    <div class="photo-section-header">
+                        <h2>Itens da Vistoria</h2>
+                        <div class="photo-actions">
+                            <button type="button" class="photo-btn" id="openCameraInspection">
+                                <span class="material-icons">camera_alt</span>
+                                Câmera
+                            </button>
+                            <button type="button" class="photo-btn" id="triggerSelectPhotoInspection">
+                                <span class="material-icons">collections</span>
+                                Galeria
+                            </button>
+                        </div>
+                    </div>
+                    <input type="file" id="selectPhotoInspection" accept="image/*" multiple style="display: none;">
+
+                    <!-- Container de Cards -->
+                    <div class="cards-container" id="inspectionCardsContainer">
+                        <div class="no-photos-message" id="noInspectionPhotos">
+                            <span class="material-icons">add_photo_alternate</span>
+                            <p>Nenhuma foto adicionada ainda.</p>
+                            <p>Use os botões acima para adicionar fotos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danos Encontrados - NOVO LAYOUT COM CARDS -->
+            <div class="info-block">
+                <div class="form-section">
+                    <div class="photo-section-header">
+                        <h2>Danos Encontrados</h2>
+                        <div class="photo-actions">
+                            <button type="button" class="photo-btn" id="openCameraDamage">
+                                <span class="material-icons">camera_alt</span>
+                                Câmera
+                            </button>
+                            <button type="button" class="photo-btn" id="triggerSelectPhotoDamage">
+                                <span class="material-icons">collections</span>
+                                Galeria
+                            </button>
+                        </div>
+                    </div>
+                    <input type="file" id="selectPhotoDamage" accept="image/*" multiple style="display: none;">
+
+                    <!-- Container de Cards -->
+                    <div class="cards-container" id="damageCardsContainer">
+                        <div class="no-photos-message" id="noDamagePhotos">
+                            <span class="material-icons">add_photo_alternate</span>
+                            <p>Nenhuma foto adicionada ainda.</p>
+                            <p>Use os botões acima para adicionar fotos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informações Adicionais -->
+            <div class="info-block">
+                <div class="form-section">
+                    <h2>Informações Adicionais</h2>
+                    <div class="form-group">
+                        <label for="additionalInfo">Observações a incluir no laudo:</label>
+                        <textarea id="additionalInfo" name="additionalInfo" rows="5"
+                            placeholder="Digite aqui observações adicionais sobre a vistoria, se houver."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exportar Laudo -->
+            <div class="info-block">
+                <div class="form-section">
+                    <h2>Exportar Laudo</h2>
+                    <div class="form-group" style="max-width: 420px; margin: 0 auto 20px auto;">
+                        <label for="pdfCompressionLevel">Compressão das fotos no PDF</label>
+                        <select id="pdfCompressionLevel">
+                            <option value="alta">Alta qualidade (arquivo maior)</option>
+                            <option value="media" selected>Recomendado (equilíbrio entre qualidade e tamanho)</option>
+                            <option value="baixa">Máxima compressão (arquivo menor)</option>
+                        </select>
+                    </div>
+                    <div class="button-container">
+                        <button type="button" class="button save-photos-button" id="savePhotos">
+                            <span class="material-icons">folder_zip</span> Salvar Fotos
+                        </button>
+                        <button type="button" class="button pdf-button" id="generatePdf">
+                            <span class="material-icons">picture_as_pdf</span> Gerar PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Modal da Câmera -->
+    <div id="cameraModal" class="camera-modal">
+        <div class="camera-modal-content">
+            <span class="camera-modal-close" id="cameraModalClose">&times;</span>
+            <h2>Pré-visualização da Câmera</h2>
+            <video id="cameraFeed" autoplay playsinline></video>
+            <canvas id="cameraCanvas" style="display:none;"></canvas>
+            <p id="cameraErrorMessage" class="camera-error-message" style="display:none;"></p>
+            <div class="camera-modal-buttons">
+                <button type="button" class="button primary-button" id="takePhoto">
+                    <span class="material-icons">camera</span> Tirar Foto
+                </button>
+                <button type="button" class="button delete-button" id="cancelCamera">
+                    <span class="material-icons">cancel</span> Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Box -->
+    <div id="messageBox" style="
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        z-index: 1001;
+        text-align: center;
+        font-weight: bold;
+        border: 1px solid #f5c6cb;
+        max-width: 80%;
+    ">
+        <p id="messageText"></p>
+        <button id="closeMessageBox" style="
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        ">OK</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+    <script>
+
+        const { jsPDF } = window.jspdf;
+
+        // Configuração do worker do pdf.js (usado para IMPORTAR laudos em PDF)
+        if (window.pdfjsLib) {
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+                'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+
+        // Arrays para armazenar itens e danos
+        let inspectionItems = [];
+        let damageItems = [];
+
+        // Dados dos estados e municípios
+        let estadosData = [];
+        let municipiosData = [];
+
+        // Elementos do DOM
+        let reportDateInput;
+        let cpfInput;
+        let selectPhotoInspectionInput;
+        let triggerSelectPhotoInspectionButton;
+        let inspectionCardsContainer;
+        let noInspectionPhotos;
+
+        let selectPhotoDamageInput;
+        let triggerSelectPhotoDamageButton;
+        let damageCardsContainer;
+        let noDamagePhotos;
+
+        let brokerNameInput;
+        let creciInput;
+        let propertyTypeSelect;
+        let destinationSelect;
+        let propertyAddressTextarea;
+        let landlordInput;
+        let tenantInput;
+        let contractDateInput;
+        let generatePdfButton;
+        let pdfCompressionLevelSelect;
+        let additionalInfoTextarea;
+        let reportTypeRadios;
+
+        let estadoSelect;
+        let municipioSelect;
+        let vistoriaComplementarCheckbox;
+
+        // Câmera
+        let cameraModal;
+        let cameraFeed;
+        let cameraCanvas;
+        let takePhotoButton;
+        let cancelCameraButton;
+        let cameraModalCloseButton;
+        let cameraErrorMessage;
+        let currentPhotoType = ''; // 'inspection' ou 'damage'
+
+        // Message box
+        let messageBox;
+        let messageText;
+        let closeMessageBoxButton;
+
+        // Importar Vistoria (PDF)
+        let importVistoriaButton;
+        let importVistoriaInput;
+
+        // Variável para condição do imóvel
+        let selectedPropertyCondition = '';
+
+        function showMessage(message) {
+            if (messageText && messageBox) {
+                messageText.textContent = message;
+                messageBox.style.display = 'block';
+            } else {
+                console.error("Message box elements not found.");
+                alert(message);
+            }
+        }
+
+        function closeMessageBox() {
+            if (messageBox) {
+                messageBox.style.display = 'none';
+            }
+        }
+
+        // Carregar dados dos arquivos JSON
+        async function loadLocationData() {
+            try {
+                const estadosResponse = await fetch('JSON/estados.json');
+                estadosData = await estadosResponse.json();
+
+                const municipiosResponse = await fetch('JSON/municipios.json');
+                municipiosData = await municipiosResponse.json();
+
+                populateEstadosSelect();
+
+                const bahiaId = 29;
+                estadoSelect.value = bahiaId;
+                updateMunicipiosSelect(bahiaId);
+
+                setTimeout(() => {
+                    for (let i = 0; i < municipioSelect.options.length; i++) {
+                        if (municipioSelect.options[i].value === 'Camaçari') {
+                            municipioSelect.selectedIndex = i;
+                            break;
+                        }
+                    }
+                }, 100);
+
+            } catch (error) {
+                console.error('Erro ao carregar dados de localização:', error);
+                showMessage('Erro ao carregar dados de estados e municípios. Verifique se os arquivos JSON estão disponíveis.');
+            }
+        }
+
+        function populateEstadosSelect() {
+            estadoSelect.innerHTML = '';
+            estadosData.forEach(estado => {
+                const option = document.createElement('option');
+                option.value = estado.id;
+                option.textContent = `${estado.name} (${estado.abbr})`;
+                estadoSelect.appendChild(option);
+            });
+        }
+
+        function updateMunicipiosSelect(stateId) {
+            municipioSelect.innerHTML = '';
+            const municipiosFiltrados = municipiosData.filter(m => m.state_id === parseInt(stateId));
+            municipiosFiltrados.sort((a, b) => a.name.localeCompare(b.name));
+
+            municipiosFiltrados.forEach(municipio => {
+                const option = document.createElement('option');
+                option.value = municipio.name;
+                option.textContent = municipio.name;
+                municipioSelect.appendChild(option);
+            });
+        }
+
+        // Função para abrir a câmera
+        async function openCamera(type) {
+            currentPhotoType = type;
+            if (cameraErrorMessage) cameraErrorMessage.style.display = 'none';
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment' }
+                });
+                if (cameraFeed) cameraFeed.srcObject = stream;
+                if (cameraModal) cameraModal.style.display = 'flex';
+            } catch (err) {
+                console.error("Erro ao acessar a câmera: ", err);
+                if (cameraErrorMessage) {
+                    cameraErrorMessage.textContent = 'Não foi possível acessar a câmera. Verifique as permissões.';
+                    cameraErrorMessage.style.display = 'block';
+                }
+                showMessage('Não foi possível acessar a câmera. Verifique as permissões do navegador.');
+            }
+        }
+
+        // Função para fechar a câmera
+        function closeCameraModal() {
+            if (cameraFeed && cameraFeed.srcObject) {
+                const stream = cameraFeed.srcObject;
+                const tracks = stream.getTracks();
+                tracks.forEach(track => track.stop());
+            }
+            if (cameraModal) cameraModal.style.display = 'none';
+        }
+
+        // Função para tirar foto
+        function takePhoto() {
+            if (!cameraCanvas || !cameraFeed) {
+                console.error("Camera canvas or feed not available.");
+                showMessage("Erro: Câmera não disponível para tirar foto.");
+                return;
+            }
+            const context = cameraCanvas.getContext('2d');
+            cameraCanvas.width = cameraFeed.videoWidth;
+            cameraCanvas.height = cameraFeed.videoHeight;
+            context.drawImage(cameraFeed, 0, 0, cameraCanvas.width, cameraCanvas.height);
+            const photoDataUrl = cameraCanvas.toDataURL('image/png');
+            closeCameraModal();
+
+            if (currentPhotoType === 'inspection') {
+                addInspectionItem(photoDataUrl);
+            } else if (currentPhotoType === 'damage') {
+                addDamageItem(photoDataUrl);
+            }
+        }
+
+        // NOVO: Função para criar card de foto
+        function createPhotoCard(item, type, index) {
+            const card = document.createElement('div');
+            card.className = 'photo-card';
+            card.dataset.id = item.id;
+            card.dataset.type = type;
+
+            const img = document.createElement('img');
+            img.className = 'photo-card-image';
+            img.src = item.photo;
+            img.alt = `Foto ${index + 1}`;
+
+            const content = document.createElement('div');
+            content.className = 'photo-card-content';
+
+            const textarea = document.createElement('textarea');
+            textarea.className = 'photo-card-textarea';
+            textarea.placeholder = 'Digite a descrição da foto...';
+            textarea.value = item.description || '';
+            textarea.addEventListener('input', (e) => {
+                item.description = e.target.value;
+            });
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'photo-card-delete';
+            deleteBtn.innerHTML = '<span class="material-icons">delete</span>';
+            deleteBtn.onclick = () => {
+                if (type === 'inspection') {
+                    deleteInspectionItem(item.id);
+                } else {
+                    deleteDamageItem(item.id);
+                }
+            };
+
+            content.appendChild(textarea);
+            content.appendChild(deleteBtn);
+            card.appendChild(img);
+            card.appendChild(content);
+
+            return card;
+        }
+
+        // Função para adicionar item de vistoria
+        function addInspectionItem(photo = '', description = '') {
+            const item = {
+                id: Date.now(), // Usar timestamp para ID único
+                description: description,
+                photo: photo
+            };
+            inspectionItems.push(item);
+            renderInspectionItems();
+        }
+
+        // Função para renderizar itens de vistoria (CARDS)
+        function renderInspectionItems() {
+            if (!inspectionCardsContainer) return;
+
+            inspectionCardsContainer.innerHTML = '';
+
+            if (inspectionItems.length === 0) {
+                if (noInspectionPhotos) {
+                    inspectionCardsContainer.appendChild(noInspectionPhotos);
+                }
+                return;
+            }
+
+            inspectionItems.forEach((item, index) => {
+                const card = createPhotoCard(item, 'inspection', index);
+                inspectionCardsContainer.appendChild(card);
+            });
+        }
+
+        // Função para deletar item de vistoria
+        function deleteInspectionItem(id) {
+            inspectionItems = inspectionItems.filter(item => item.id !== id);
+            renderInspectionItems();
+        }
+
+        // Função para adicionar dano encontrado
+        function addDamageItem(photo = '', description = '') {
+            const item = {
+                id: Date.now(),
+                description: description,
+                photo: photo
+            };
+            damageItems.push(item);
+            renderDamageItems();
+        }
+
+        // Função para renderizar danos (CARDS)
+        function renderDamageItems() {
+            if (!damageCardsContainer) return;
+
+            damageCardsContainer.innerHTML = '';
+
+            if (damageItems.length === 0) {
+                if (noDamagePhotos) {
+                    damageCardsContainer.appendChild(noDamagePhotos);
+                }
+                return;
+            }
+
+            damageItems.forEach((item, index) => {
+                const card = createPhotoCard(item, 'damage', index);
+                damageCardsContainer.appendChild(card);
+            });
+        }
+
+        // Função para deletar dano encontrado
+        function deleteDamageItem(id) {
+            damageItems = damageItems.filter(item => item.id !== id);
+            renderDamageItems();
+        }
+
+        // Função para ler um único arquivo como dataURL (Promise)
+        function readFileAsDataURL(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = () => reject(new Error(`Falha ao ler o arquivo: ${file.name}`));
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Função para lidar com a seleção de arquivo(s) de foto (suporta múltiplos arquivos)
+        async function handleFileSelect(event, type) {
+            const files = Array.from(event.target.files || []);
+            // Limpar input já aqui para permitir selecionar os mesmos arquivos novamente depois
+            event.target.value = '';
+
+            if (files.length === 0) return;
+
+            for (const file of files) {
+                try {
+                    const dataUrl = await readFileAsDataURL(file);
+                    if (type === 'inspection') {
+                        addInspectionItem(dataUrl);
+                    } else if (type === 'damage') {
+                        addDamageItem(dataUrl);
+                    }
+                } catch (error) {
+                    console.error(error);
+                    showMessage(`Erro ao carregar a foto "${file.name}".`);
+                }
+            }
+        }
+
+        // Mapa com os parâmetros de cada nível de compressão do PDF
+        const PDF_COMPRESSION_PRESETS = {
+            alta: { maxDimension: 1600, quality: 0.85 },
+            media: { maxDimension: 1100, quality: 0.65 },
+            baixa: { maxDimension: 800, quality: 0.45 }
+        };
+
+        // Função para obter o nível de compressão selecionado pelo usuário
+        function getSelectedCompressionPreset() {
+            const level = pdfCompressionLevelSelect ? pdfCompressionLevelSelect.value : 'media';
+            return PDF_COMPRESSION_PRESETS[level] || PDF_COMPRESSION_PRESETS.media;
+        }
+
+        // Recebe uma dataURL de imagem (PNG ou JPEG) e devolve uma versão redimensionada
+        // e recomprimida em JPEG, muito mais leve para embutir no PDF.
+        function compressImageForPDF(dataUrl, maxDimension, quality) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    let width = img.naturalWidth;
+                    let height = img.naturalHeight;
+
+                    if (width > maxDimension || height > maxDimension) {
+                        if (width >= height) {
+                            height = Math.round(height * (maxDimension / width));
+                            width = maxDimension;
+                        } else {
+                            width = Math.round(width * (maxDimension / height));
+                            height = maxDimension;
+                        }
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    // Fundo branco: fotos PNG com transparência ficariam pretas em JPEG sem isso
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, width, height);
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    resolve({
+                        src: canvas.toDataURL('image/jpeg', quality),
+                        width: width,
+                        height: height
+                    });
+                };
+                img.onerror = () => {
+                    console.warn('Falha ao comprimir imagem para o PDF, usando original.');
+                    resolve(null);
+                };
+                img.src = dataUrl;
+            });
+        }
+
+        // Pré-carrega e comprime as imagens dos itens especificamente para geração do PDF,
+        // sem alterar item.photo (usado nos cards e no ZIP de fotos originais).
+        async function preloadAndCompressImagesForPDF(items, preset) {
+            const imagePromises = items.map(async (item) => {
+                if (item.photo && item.photo !== '') {
+                    const compressed = await compressImageForPDF(item.photo, preset.maxDimension, preset.quality);
+                    if (compressed) {
+                        item.loadedImage = {
+                            src: compressed.src,
+                            naturalWidth: compressed.width,
+                            naturalHeight: compressed.height
+                        };
+                        item.naturalWidth = compressed.width;
+                        item.naturalHeight = compressed.height;
+                    } else {
+                        // Fallback: usa a imagem original caso a compressão falhe
+                        await new Promise((resolve) => {
+                            const img = new Image();
+                            img.onload = () => {
+                                item.loadedImage = img;
+                                item.naturalWidth = img.naturalWidth;
+                                item.naturalHeight = img.naturalHeight;
+                                resolve();
+                            };
+                            img.onerror = () => {
+                                item.loadedImage = null;
+                                item.naturalWidth = 0;
+                                item.naturalHeight = 0;
+                                resolve();
+                            };
+                            img.src = item.photo;
+                        });
+                    }
+                }
+            });
+            await Promise.all(imagePromises);
+        }
+
+        // ==========================================================================
+        // IMPORTAR VISTORIA (ler um PDF gerado por este sistema e preencher o site)
+        // ==========================================================================
+
+        // Meses em português usados na formatação da "Data do Laudo" no rodapé do PDF
+        const MONTH_NAMES_PT = [
+            "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+            "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
+        ];
+
+        // Extrai o texto entre dois marcadores literais, a partir de uma posição do texto.
+        // Retorna o valor encontrado (ou '' se não encontrado) e o índice onde parou,
+        // para permitir buscas encadeadas em sequência (mesma ordem em que aparecem no PDF).
+        function extractBetween(text, startMarker, endMarker, fromIndex = 0) {
+            const startIdx = text.indexOf(startMarker, fromIndex);
+            if (startIdx === -1) return { value: '', nextIndex: fromIndex };
+            const contentStart = startIdx + startMarker.length;
+            const endIdx = text.indexOf(endMarker, contentStart);
+            if (endIdx === -1) return { value: '', nextIndex: contentStart };
+            return { value: text.substring(contentStart, endIdx).trim(), nextIndex: endIdx };
+        }
+
+        // Junta os itens de texto de uma célula/linha em uma string legível
+        function joinTextItems(items) {
+            return items
+                .map(it => it.str.trim())
+                .filter(Boolean)
+                .join(' ')
+                .replace(/\s+([,.;:])/g, '$1')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        // A partir dos itens de texto de uma região (entre dois títulos de tabela),
+        // localiza os marcadores de linha "1", "2", "3"... (coluna Nº) e usa tudo o que
+        // vem entre um marcador e o próximo como a descrição daquela linha.
+        function extractTableRows(regionItems) {
+            const markerIdxs = [];
+            let expected = 1;
+            regionItems.forEach((item, idx) => {
+                if (item.str.trim() === String(expected)) {
+                    markerIdxs.push({ idx, page: item.page, y: item.y });
+                    expected++;
+                }
+            });
+
+            const rows = [];
+            for (let i = 0; i < markerIdxs.length; i++) {
+                const startIdx = markerIdxs[i].idx + 1;
+                const endIdx = (i + 1 < markerIdxs.length) ? markerIdxs[i + 1].idx : regionItems.length;
+                const description = joinTextItems(regionItems.slice(startIdx, endIdx));
+                rows.push({
+                    description: description,
+                    page: markerIdxs[i].page,
+                    y: markerIdxs[i].y,
+                    photo: ''
+                });
+            }
+            return rows;
+        }
+
+        // Associa cada foto extraída do PDF à linha (item) mais próxima na mesma página
+        function matchImagesToRows(rows, images) {
+            const usedImages = new Set();
+            rows.forEach(row => {
+                let bestIdx = null;
+                let bestDist = Infinity;
+                images.forEach((img, idx) => {
+                    if (usedImages.has(idx) || img.page !== row.page) return;
+                    const dist = Math.abs(img.centerY - row.y);
+                    if (dist < bestDist) {
+                        bestDist = dist;
+                        bestIdx = idx;
+                    }
+                });
+                if (bestIdx !== null && bestDist < 45) {
+                    usedImages.add(bestIdx);
+                    row.photo = images[bestIdx].dataUrl;
+                }
+            });
+        }
+
+        // Lê o PDF por completo: extrai texto (com posição) e recorta as fotos embutidas
+        async function readPdfContent(file) {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            const OPS = window.pdfjsLib.OPS;
+
+            const allTextItems = [];
+            const imageBoxes = [];
+            const pageCanvases = {};
+            const RENDER_SCALE = 2;
+            let globalImageIndex = 0;
+
+            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                const page = await pdf.getPage(pageNum);
+                const baseViewport = page.getViewport({ scale: 1 });
+                const pageHeightPts = baseViewport.height;
+
+                // Texto da página, com posição convertida para coordenadas "de cima para baixo".
+                // O rodapé (dados da empresa e "página X de Y") é impresso em todas as páginas
+                // na faixa final da folha e é ignorado aqui para não "vazar" para a descrição
+                // do último item de uma tabela quando ela continua na página seguinte.
+                const footerZoneStart = pageHeightPts - 25;
+                const textContent = await page.getTextContent();
+                textContent.items.forEach(item => {
+                    if (!item.str || !item.str.trim()) return;
+                    const y = pageHeightPts - item.transform[5];
+                    if (y > footerZoneStart) return;
+                    allTextItems.push({
+                        str: item.str,
+                        x: item.transform[4],
+                        y: y,
+                        page: pageNum
+                    });
+                });
+
+                // Localiza a posição (bounding box) de cada imagem desenhada na página
+                const opList = await page.getOperatorList();
+                let lastMatrix = null;
+                for (let i = 0; i < opList.fnArray.length; i++) {
+                    const fn = opList.fnArray[i];
+                    const args = opList.argsArray[i];
+                    if (fn === OPS.transform) {
+                        lastMatrix = args;
+                    } else if (fn === OPS.paintImageXObject || fn === OPS.paintJpegXObject || fn === OPS.paintImageXObjectRepeat) {
+                        if (lastMatrix) {
+                            const corners = [[0, 0], [1, 0], [0, 1], [1, 1]].map(([ux, uy]) => [
+                                lastMatrix[0] * ux + lastMatrix[2] * uy + lastMatrix[4],
+                                lastMatrix[1] * ux + lastMatrix[3] * uy + lastMatrix[5]
+                            ]);
+                            const xs = corners.map(c => c[0]);
+                            const ys = corners.map(c => c[1]);
+                            const minX = Math.min(...xs), maxX = Math.max(...xs);
+                            const minYpdf = Math.min(...ys), maxYpdf = Math.max(...ys);
+                            const y0 = pageHeightPts - maxYpdf;
+                            const y1 = pageHeightPts - minYpdf;
+                            imageBoxes.push({
+                                page: pageNum,
+                                x0: minX, x1: maxX, y0, y1,
+                                centerY: (y0 + y1) / 2,
+                                globalIndex: globalImageIndex
+                            });
+                            globalImageIndex++;
+                        }
+                    }
+                }
+
+                // Renderiza a página inteira em um canvas para depois recortar as fotos dela
+                const renderViewport = page.getViewport({ scale: RENDER_SCALE });
+                const canvas = document.createElement('canvas');
+                canvas.width = renderViewport.width;
+                canvas.height = renderViewport.height;
+                const ctx = canvas.getContext('2d');
+                await page.render({ canvasContext: ctx, viewport: renderViewport }).promise;
+                pageCanvases[pageNum] = canvas;
+            }
+
+            // A primeira imagem do documento é sempre o logotipo do cabeçalho — ignorá-la
+            const galleryImages = imageBoxes.filter(b => b.globalIndex > 0);
+            galleryImages.forEach(box => {
+                const canvas = pageCanvases[box.page];
+                const sx = Math.max(0, box.x0 * RENDER_SCALE);
+                const sy = Math.max(0, box.y0 * RENDER_SCALE);
+                const sw = Math.max(1, (box.x1 - box.x0) * RENDER_SCALE);
+                const sh = Math.max(1, (box.y1 - box.y0) * RENDER_SCALE);
+                const cropCanvas = document.createElement('canvas');
+                cropCanvas.width = Math.round(sw);
+                cropCanvas.height = Math.round(sh);
+                const cropCtx = cropCanvas.getContext('2d');
+                cropCtx.drawImage(canvas, sx, sy, sw, sh, 0, 0, cropCanvas.width, cropCanvas.height);
+                box.dataUrl = cropCanvas.toDataURL('image/jpeg', 0.9);
+            });
+
+            allTextItems.sort((a, b) => a.page - b.page || a.y - b.y || a.x - b.x);
+
+            return { allTextItems, galleryImages };
+        }
+
+        // Função principal: lê um PDF de laudo e preenche o formulário com seus dados
+        async function importVistoriaFromPDF(file) {
+            if (!file || file.type !== 'application/pdf') {
+                showMessage('Por favor, selecione um arquivo PDF válido.');
+                return;
+            }
+            if (!window.pdfjsLib) {
+                showMessage('Não foi possível carregar o leitor de PDF. Verifique sua conexão com a internet e tente novamente.');
+                return;
+            }
+
+            const originalButtonHtml = importVistoriaButton ? importVistoriaButton.innerHTML : '';
+            if (importVistoriaButton) {
+                importVistoriaButton.disabled = true;
+                importVistoriaButton.innerHTML = '<span class="material-icons">hourglass_top</span> Importando...';
+            }
+            showMessage('Lendo o PDF, aguarde um instante...');
+
+            try {
+                const { allTextItems, galleryImages } = await readPdfContent(file);
+
+                // Reconstrói o texto corrido do documento (respeitando a ordem de leitura)
+                let fullText = '';
+                let prev = null;
+                allTextItems.forEach(item => {
+                    if (prev && prev.page === item.page) {
+                        const gap = item.x - prev.x - prev.width;
+                        if (gap > 0.5 || item.y - prev.y > 1) {
+                            fullText += ' ';
+                        }
+                    } else if (prev) {
+                        fullText += ' ';
+                    }
+                    fullText += item.str;
+                    prev = { x: item.x, y: item.y, page: item.page, width: item.width || 0 };
+                });
+
+                // --- Validação: este arquivo parece ter sido gerado por este sistema? ---
+                const hasTitle = fullText.includes('Laudo de Vistoria');
+                const hasParagraphAnchor = fullText.includes('Este Laudo de Vistoria');
+                const hasInspectionTable = fullText.includes('Itens da Vistoria');
+                const hasDamageTable = fullText.includes('Danos Encontrados');
+                if (!hasTitle || !hasParagraphAnchor || !hasInspectionTable || !hasDamageTable) {
+                    showMessage('Este arquivo não parece ser um Laudo de Vistoria gerado por este sistema. Não foi possível importar.');
+                    return;
+                }
+
+                // --- Extração dos campos do parágrafo principal ---
+                let cursor = 0;
+                let r;
+
+                r = extractBetween(fullText, 'Este Laudo de Vistoria', ', executada pelo(a) corretor(a)', cursor);
+                const tipoCompleto = r.value; cursor = r.nextIndex;
+
+                r = extractBetween(fullText, ', executada pelo(a) corretor(a)', ', inscrito no CPF sob o nº', cursor);
+                const brokerName = r.value; cursor = r.nextIndex;
+
+                r = extractBetween(fullText, ', inscrito no CPF sob o nº', ', registrado(a) no CRECI-BA sob o nº', cursor);
+                const cpf = r.value; cursor = r.nextIndex;
+
+                r = extractBetween(fullText, ', registrado(a) no CRECI-BA sob o nº', ', em imóvel do tipo', cursor);
+                const creci = r.value; cursor = r.nextIndex;
+
+                r = extractBetween(fullText, ', em imóvel do tipo', ', com destinação do tipo', cursor);
+                const propertyType = r.value; cursor = r.nextIndex;
+
+                r = extractBetween(fullText, ', com destinação do tipo', 'situado no(a)', cursor);
+                const destination = r.value; cursor = r.nextIndex;
+
+                r = extractBetween(fullText, 'situado no(a)', ', no municipio de', cursor);
+                const propertyAddress = r.value; cursor = r.nextIndex;
+
+                r = extractBetween(fullText, ', no municipio de', ', de propriedade do(a) Sr.(a)', cursor);
+                const municipioEstado = r.value; cursor = r.nextIndex;
+
+                r = extractBetween(fullText, ', de propriedade do(a) Sr.(a)', ', que foi locado para o(a) Sr.(a)', cursor);
+                const landlord = r.value; cursor = r.nextIndex;
+
+                r = extractBetween(fullText, ', que foi locado para o(a) Sr.(a)', '. O presente', cursor);
+                const tenant = r.value; cursor = r.nextIndex;
+
+                r = extractBetween(fullText, 'CONTRATO DE LOCAÇÃO datado de', ', para todos os fins e efeitos de direito', cursor);
+                const contractDateBR = r.value; cursor = r.nextIndex;
+
+                r = extractBetween(fullText, 'Estado do Imóvel:', 'Nº', cursor);
+                let propertyStateRaw = r.value;
+
+                // Tipo (Inicial/Final) e se é Vistoria Complementar
+                const isComplementar = tipoCompleto.includes('COMPLEMENTAR');
+                const reportTypeValue = tipoCompleto.replace('COMPLEMENTAR', '').trim();
+
+                // Município / Estado (abreviação), separados pela última barra
+                const lastSlash = municipioEstado.lastIndexOf('/');
+                const municipioNome = lastSlash !== -1 ? municipioEstado.substring(0, lastSlash).trim() : municipioEstado.trim();
+                const estadoAbbr = lastSlash !== -1 ? municipioEstado.substring(lastSlash + 1).trim() : '';
+
+                // Data do Laudo: procurada no formato por extenso "dd de mês de aaaa" (rodapé)
+                let reportDateISO = '';
+                const dateMatch = fullText.match(/(\d{1,2})\s+de\s+(janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)\s+de\s+(\d{4})/i);
+                if (dateMatch) {
+                    const day = dateMatch[1].padStart(2, '0');
+                    const monthIdx = MONTH_NAMES_PT.findIndex(m => m.toLowerCase() === dateMatch[2].toLowerCase());
+                    const year = dateMatch[3];
+                    if (monthIdx !== -1) {
+                        reportDateISO = `${year}-${String(monthIdx + 1).padStart(2, '0')}-${day}`;
+                    }
+                }
+
+                // Data do Contrato: formato dd/mm/aaaa -> aaaa-mm-dd
+                let contractDateISO = '';
+                const contractParts = contractDateBR.split('/');
+                if (contractParts.length === 3) {
+                    contractDateISO = `${contractParts[2]}-${contractParts[1].padStart(2, '0')}-${contractParts[0].padStart(2, '0')}`;
+                }
+
+                // --- Extração das tabelas (Itens da Vistoria / Danos Encontrados) ---
+                const inspIdx = allTextItems.findIndex(it => it.str.trim() === 'Itens da Vistoria');
+                const dmgIdx = allTextItems.findIndex((it, idx) => idx > inspIdx && it.str.trim() === 'Danos Encontrados');
+
+                // O fim da tabela de danos é identificado pela linha "cidade, data por extenso,"
+                // (impressa logo após as tabelas, antes das assinaturas). Ela é localizada de
+                // forma confiável pela presença do nome de um mês por extenso, o que evita
+                // capturar a linha de assinaturas/rodapé como se fosse parte da última descrição.
+                const monthPattern = new RegExp(MONTH_NAMES_PT.join('|'), 'i');
+                let endIdx = allTextItems.length;
+                const monthItemIdx = allTextItems.findIndex((it, idx) => idx > dmgIdx && monthPattern.test(it.str));
+                if (monthItemIdx !== -1) {
+                    endIdx = monthItemIdx;
+                } else if (municipioNome) {
+                    // Reserva 1: tenta localizar pelo nome do município
+                    const foundEnd = allTextItems.findIndex((it, idx) => idx > dmgIdx && it.str.trim() === municipioNome);
+                    if (foundEnd !== -1) endIdx = foundEnd;
+                } else if (landlord) {
+                    // Reserva 2: localiza pelo nome do locador, que reaparece na linha de assinatura
+                    const foundEnd = allTextItems.findIndex((it, idx) => idx > dmgIdx && it.str.trim() === landlord.trim());
+                    if (foundEnd !== -1) endIdx = foundEnd;
+                }
+
+                const inspectionRegion = (inspIdx !== -1 && dmgIdx !== -1) ? allTextItems.slice(inspIdx + 1, dmgIdx) : [];
+                const damageRegion = (dmgIdx !== -1) ? allTextItems.slice(dmgIdx + 1, endIdx) : [];
+
+                const inspectionRows = extractTableRows(inspectionRegion);
+                const damageRows = extractTableRows(damageRegion);
+
+                // As fotos da tabela de vistoria vêm antes das fotos da tabela de danos:
+                // separamos a lista de imagens usando a posição (página) da segunda tabela.
+                const dmgStartPage = (dmgIdx !== -1) ? allTextItems[dmgIdx].page : Infinity;
+                const inspectionImages = galleryImages.filter(img => img.page < dmgStartPage ||
+                    (img.page === dmgStartPage && img.centerY < allTextItems[dmgIdx].y));
+                const damageImages = galleryImages.filter(img => !inspectionImages.includes(img));
+
+                matchImagesToRows(inspectionRows, inspectionImages);
+                matchImagesToRows(damageRows, damageImages);
+
+                // --- Preenchimento do formulário ---
+
+                // Tipo de vistoria
+                const reportTypeRadio = document.querySelector(`input[name="reportType"][value="${reportTypeValue}"]`);
+                if (reportTypeRadio) reportTypeRadio.checked = true;
+                if (vistoriaComplementarCheckbox) vistoriaComplementarCheckbox.checked = isComplementar;
+
+                // Estado / Município (aguarda o carregamento dos dados, se necessário)
+                if (!estadosData || estadosData.length === 0) {
+                    await loadLocationData();
+                }
+                if (estadoAbbr) {
+                    const estadoObj = estadosData.find(e => e.abbr === estadoAbbr);
+                    if (estadoObj && estadoSelect) {
+                        estadoSelect.value = estadoObj.id;
+                        updateMunicipiosSelect(estadoObj.id);
+                        if (municipioNome && municipioSelect) {
+                            for (let i = 0; i < municipioSelect.options.length; i++) {
+                                if (municipioSelect.options[i].value === municipioNome) {
+                                    municipioSelect.selectedIndex = i;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (contractDateISO && contractDateInput) contractDateInput.value = contractDateISO;
+                if (reportDateISO && reportDateInput) reportDateInput.value = reportDateISO;
+                if (brokerNameInput) brokerNameInput.value = brokerName;
+                if (creciInput) creciInput.value = creci;
+                if (cpfInput) cpfInput.value = cpf;
+                if (landlordInput) landlordInput.value = landlord;
+                if (tenantInput) tenantInput.value = tenant;
+                if (propertyAddressTextarea) propertyAddressTextarea.value = propertyAddress;
+                if (propertyTypeSelect && propertyType) propertyTypeSelect.value = propertyType;
+                if (destinationSelect && destination) destinationSelect.value = destination;
+
+                // Estado do imóvel (botões NOVO/EXCELENTE/BOM/REGULAR/RUIM)
+                const conditionMapReverse = {
+                    'Novo': 'novo', 'Excelente': 'excelente', 'Bom': 'bom',
+                    'Regular': 'regular', 'Ruim': 'ruim'
+                };
+                const conditionKey = conditionMapReverse[propertyStateRaw.trim()];
+                if (conditionKey) {
+                    const conditionButton = document.querySelector(`.ConditionButtons button[data-condition="${conditionKey}"]`);
+                    if (conditionButton) selectCondition(conditionButton);
+                }
+
+                // Itens de vistoria e danos encontrados (adicionados aos já existentes)
+                inspectionRows.forEach(row => addInspectionItem(row.photo, row.description));
+                damageRows.forEach(row => addDamageItem(row.photo, row.description));
+
+                showMessage(
+                    `Laudo importado com sucesso! Foram adicionados ${inspectionRows.length} item(ns) de vistoria e ${damageRows.length} dano(s) encontrado(s). Revise os dados preenchidos antes de gerar um novo PDF.`
+                );
+
+            } catch (error) {
+                console.error('Erro ao importar o laudo em PDF:', error);
+                showMessage('Ocorreu um erro ao importar o PDF. Verifique se o arquivo não está corrompido e tente novamente.');
+            } finally {
+                if (importVistoriaButton) {
+                    importVistoriaButton.disabled = false;
+                    importVistoriaButton.innerHTML = originalButtonHtml;
+                }
+            }
+        }
+
+        // Função para gerar PDF (mantendo lógica de TABELA)
+        async function generatePDF() {
+            const doc = new jsPDF({ margin: { bottom: 40 } });
+            let yPos = 15;
+            const margin = 10;
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+            const contentHeight = pageHeight - 40;
+
+            const compressionPreset = getSelectedCompressionPreset();
+            await preloadAndCompressImagesForPDF(inspectionItems, compressionPreset);
+            await preloadAndCompressImagesForPDF(damageItems, compressionPreset);
+
+            const logoUrl = "assets/Logo.png";
+            const loadedLogo = await new Promise((resolve) => {
+                const img = new Image();
+                img.src = logoUrl;
+                img.onload = () => resolve(img);
+                img.onerror = () => {
+                    console.warn(`Failed to load logo: ${logoUrl}`);
+                    resolve(null);
+                };
+            });
+
+            if (loadedLogo) {
+                const maxWidth = pageWidth - (2 * margin);
+                const aspectRatio = loadedLogo.naturalHeight / loadedLogo.naturalWidth;
+                const logoWidth = maxWidth;
+                const logoHeight = logoWidth * aspectRatio;
+
+                doc.addImage(loadedLogo, 'PNG', margin, yPos, logoWidth, logoHeight);
+                yPos += logoHeight + 15;
+            }
+
+            doc.setFontSize(22);
+            doc.setFont("helvetica", "bold");
+            doc.text("Laudo de Vistoria", pageWidth / 2, yPos, { align: "center" });
+            yPos += 10;
+
+            doc.setDrawColor(230, 14, 22);
+            doc.setLineWidth(0.75);
+            doc.line(margin, yPos, pageWidth - margin, yPos);
+            yPos += 15;
+
+            const reportType = document.querySelector('input[name="reportType"]:checked') ?
+                document.querySelector('input[name="reportType"]:checked').value : 'Não informado';
+            const isVistoriaComplementar = vistoriaComplementarCheckbox && vistoriaComplementarCheckbox.checked;
+            const complementarText = isVistoriaComplementar ? ' COMPLEMENTAR' : '';
+            const municipio = municipioSelect ? municipioSelect.value : '';
+            const estadoId = estadoSelect ? parseInt(estadoSelect.value) : 0;
+            const estadoObj = estadosData.find(e => e.id === estadoId);
+            const estado = estadoObj ? estadoObj.abbr : '';
+            const reportDateValue = reportDateInput && reportDateInput.value ? reportDateInput.value : '';
+            const brokerName = brokerNameInput ? (brokerNameInput.value || '') : '';
+            const cpf = cpfInput ? (cpfInput.value || '') : '';
+            const creci = creciInput ? (creciInput.value || '') : '';
+            const propertyType = propertyTypeSelect ? (propertyTypeSelect.value || '') : '';
+            const destination = destinationSelect ? (destinationSelect.value || '') : '';
+            const propertyAddress = propertyAddressTextarea ? (propertyAddressTextarea.value || '') : '';
+            const landlord = landlordInput ? (landlordInput.value || '') : '';
+            const tenant = tenantInput ? (tenantInput.value || '') : '';
+            const contractDate = contractDateInput && contractDateInput.value ?
+                new Date(contractDateInput.value).toLocaleDateString('pt-BR') : '';
+
+            function renderTextWithBold(doc, textParts, startX, startY, maxWidth) {
+                const lineHeight = 6;
+                const fontSize = 10;
+                doc.setFontSize(fontSize);
+
+                let currentY = startY;
+                let currentLineWords = [];
+                let currentLineWidth = 0;
+
+                for (let i = 0; i < textParts.length; i++) {
+                    const part = textParts[i];
+                    const words = part.text.split(' ');
+
+                    for (let j = 0; j < words.length; j++) {
+                        const word = words[j];
+                        const wordWithSpace = j < words.length - 1 ? word + ' ' : word;
+                        doc.setFont("helvetica", part.bold ? "bold" : "normal");
+                        const wordWidth = doc.getTextWidth(wordWithSpace);
+
+                        if (currentLineWidth + wordWidth > maxWidth && currentLineWords.length > 0) {
+                            renderJustifiedLine(doc, currentLineWords, startX, currentY, maxWidth, currentLineWidth - doc.getTextWidth(' '));
+                            currentY += lineHeight;
+                            currentLineWords = [];
+                            currentLineWidth = 0;
+                        }
+
+                        currentLineWords.push({
+                            text: word,
+                            bold: part.bold,
+                            spaceAfter: j < words.length - 1
+                        });
+                        currentLineWidth += wordWidth;
+                    }
+                }
+
+                if (currentLineWords.length > 0) {
+                    let x = startX;
+                    for (const word of currentLineWords) {
+                        doc.setFont("helvetica", word.bold ? "bold" : "normal");
+                        doc.setFontSize(fontSize);
+                        doc.text(word.text, x, currentY);
+                        doc.setFont("helvetica", word.bold ? "bold" : "normal");
+                        const spaceWidth = doc.getTextWidth(' ');
+                        x += doc.getTextWidth(word.text) + (word.spaceAfter ? spaceWidth : 0);
+                    }
+                    currentY += lineHeight;
+                }
+
+                return currentY;
+            }
+
+            function renderJustifiedLine(doc, lineWords, startX, y, maxWidth, lineWidth) {
+                if (lineWords.length === 0) return;
+
+                const fontSize = 10;
+                doc.setFontSize(fontSize);
+
+                if (lineWords.length === 1) {
+                    doc.setFont("helvetica", lineWords[0].bold ? "bold" : "normal");
+                    doc.text(lineWords[0].text, startX, y);
+                    return;
+                }
+
+                const totalSpaces = lineWords.length - 1;
+                const extraSpace = maxWidth - lineWidth;
+                const spacePerGap = totalSpaces > 0 ? extraSpace / totalSpaces : 0;
+
+                let x = startX;
+                for (let i = 0; i < lineWords.length; i++) {
+                    const word = lineWords[i];
+                    doc.setFont("helvetica", word.bold ? "bold" : "normal");
+                    doc.text(word.text, x, y);
+                    const wordWidth = doc.getTextWidth(word.text);
+                    x += wordWidth;
+
+                    if (i < lineWords.length - 1) {
+                        const spaceWidth = doc.getTextWidth(' ');
+                        x += spaceWidth + spacePerGap;
+                    }
+                }
+            }
+
+            const textParts = [
+                { text: "Este Laudo de Vistoria ", bold: false },
+                { text: reportType + complementarText, bold: true },
+                { text: ", executada pelo(a) corretor(a) ", bold: false },
+                { text: brokerName, bold: true },
+                { text: ", inscrito no CPF sob o nº ", bold: false },
+                { text: cpf, bold: true },
+                { text: ", registrado(a) no CRECI-BA sob o nº ", bold: false },
+                { text: creci, bold: true },
+                { text: ", em imóvel do tipo ", bold: false },
+                { text: propertyType, bold: true },
+                { text: ", com destinação do tipo ", bold: false },
+                { text: destination, bold: true },
+                { text: " situado no(a) ", bold: false },
+                { text: propertyAddress, bold: true },
+                { text: ", no municipio de ", bold: false },
+                { text: municipio + "/" + estado, bold: true },
+                { text: ", de propriedade do(a) Sr.(a) ", bold: false },
+                { text: landlord, bold: true },
+                { text: ", que foi locado para o(a) Sr.(a) ", bold: false },
+                { text: tenant, bold: true },
+                { text: '. O presente "LAUDO DE VISTORIA" foi executado pelos abaixo assinados e passa a ser parte integrante do CONTRATO DE LOCAÇÃO datado de ', bold: false },
+                { text: contractDate, bold: true },
+                { text: ", para todos os fins e efeitos de direito.", bold: false }
+            ];
+
+            const usableWidth = pageWidth - (2 * margin) - 10;
+            yPos = renderTextWithBold(doc, textParts, margin + 5, yPos, usableWidth);
+            yPos += 15;
+
+            const propertyState = getPropertyConditionForPDF();
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "normal");
+            const labelWidth = doc.getTextWidth("Estado do Imóvel: ");
+            doc.text("Estado do Imóvel: ", margin, yPos);
+            doc.setFont("helvetica", "bold");
+            doc.text(propertyState, margin + labelWidth, yPos);
+            yPos += 15;
+
+            const addTableToPDF = (doc, items, tableTitle, startY) => {
+                const cellPaddingPoints = 0.1 * 28.3465;
+                const headerText = ["Nº", "DESCRIÇÃO", "FOTO"];
+                const tempDoc = new jsPDF();
+                tempDoc.setFontSize(10);
+                tempDoc.setFont("helvetica", "bold");
+                let maxHeaderTextHeight = 0;
+                headerText.forEach(text => {
+                    const textDimensions = tempDoc.getTextDimensions(text);
+                    if (textDimensions.h > maxHeaderTextHeight) {
+                        maxHeaderTextHeight = textDimensions.h;
+                    }
+                });
+                const headerMinHeightPoints = maxHeaderTextHeight * 2;
+
+                let descriptionHeaderContent = "ITEM";
+                if (tableTitle.includes("Danos")) {
+                    descriptionHeaderContent = "Item Danificado";
+                }
+
+                const tableHeaders = [
+                    { content: 'Nº', dataKey: 'id' },
+                    { content: descriptionHeaderContent, dataKey: 'description' },
+                    { content: 'FOTO', dataKey: 'photo' }
+                ];
+
+                // Reindexar itens para a tabela
+                const reindexedItems = items.map((item, idx) => ({
+                    ...item,
+                    displayId: idx + 1
+                }));
+
+                const tableBody = reindexedItems.map(item => [
+                    item.displayId,
+                    item.description || '',
+                    ''
+                ]);
+
+                const targetImageHeightCm = 1.5;
+                const paddingCm = 0.1;
+                const cellHeightCm = targetImageHeightCm + (2 * paddingCm);
+                const cellHeightPoints = cellHeightCm * 28.3465;
+
+                doc.setFontSize(18);
+                doc.setFont("helvetica", "bold");
+                doc.text(tableTitle, pageWidth / 2, startY, { align: "center" });
+                startY += 10;
+                doc.setDrawColor(230, 14, 22);
+                doc.setLineWidth(0.75);
+                doc.line(margin, startY, pageWidth - margin, startY);
+                startY += 15;
+
+                doc.autoTable({
+                    showHead: 'firstPage',
+                    rowPageBreak: 'avoid',
+                    startY: startY,
+                    head: [tableHeaders.map(h => h.content)],
+                    body: tableBody,
+                    theme: 'grid',
+                    styles: {
+                        font: 'helvetica',
+                        fontSize: 10,
+                        textColor: [51, 51, 51],
+                        lineColor: [187, 187, 187],
+                        lineWidth: 0.1,
+                        cellPadding: cellPaddingPoints
+                    },
+                    headStyles: {
+                        fillColor: [240, 240, 240],
+                        textColor: [68, 68, 68],
+                        fontStyle: 'bold',
+                        minCellHeight: headerMinHeightPoints,
+                        halign: 'center',
+                        valign: 'middle'
+                    },
+                    columnStyles: {
+                        0: { cellWidth: 35, halign: 'center', valign: 'middle' },
+                        1: { cellWidth: 'auto', halign: 'left', valign: 'middle' },
+                        2: {
+                            cellWidth: cellHeightCm * 28.3465,
+                            minCellHeight: cellHeightPoints,
+                            halign: 'center',
+                            valign: 'middle'
+                        }
+                    },
+                    didDrawCell: function (data) {
+                        if (data.section === 'body' && data.column.index === 2) {
+                            const item = reindexedItems[data.row.index];
+                            if (item && item.loadedImage) {
+                                const img = item.loadedImage;
+                                let finalImageHeightPoints = targetImageHeightCm * 28.3465;
+                                let finalImageWidthPoints = (img.naturalWidth / img.naturalHeight) * finalImageHeightPoints;
+
+                                if (finalImageWidthPoints > data.cell.width) {
+                                    const scaleFactor = data.cell.width / finalImageWidthPoints;
+                                    finalImageWidthPoints *= scaleFactor;
+                                    finalImageHeightPoints *= scaleFactor;
+                                }
+                                if (finalImageHeightPoints > data.cell.height) {
+                                    const scaleFactorH = data.cell.height / finalImageHeightPoints;
+                                    finalImageHeightPoints *= scaleFactorH;
+                                    finalImageWidthPoints *= scaleFactorH;
+                                }
+
+                                const x = data.cell.x + (data.cell.width - finalImageWidthPoints) / 2;
+                                const y = data.cell.y + (data.cell.height - finalImageHeightPoints) / 2;
+
+                                doc.addImage(img.src, 'JPEG', x, y, finalImageWidthPoints, finalImageHeightPoints, undefined, 'FAST');
+                            }
+                            data.cell.text = [];
+                        }
+                    },
+                    didParseCell: function (data) {
+                        if (data.section === 'body' && data.column.index === 2) {
+                            data.cell.styles.minCellHeight = cellHeightPoints;
+                        }
+                    }
+                });
+
+                return doc.autoTable.previous.finalY + 15;
+            };
+            
+
+            const footerSpace = 45;
+            if (yPos + 50 > pageHeight - footerSpace) {
+                doc.addPage();
+                yPos = margin + 20;
+            }
+            yPos = addTableToPDF(doc, inspectionItems, "Itens da Vistoria", yPos);
+
+            if (yPos + 50 > pageHeight - footerSpace) {
+                doc.addPage();
+                yPos = margin + 20;
+            }
+            yPos = addTableToPDF(doc, damageItems, "Danos Encontrados", yPos);
+
+            // Informações Adicionais (inseridas antes do campo da data, ao final do laudo)
+            const additionalInfoText = additionalInfoTextarea ? (additionalInfoTextarea.value || '').trim() : '';
+            if (additionalInfoText) {
+                if (yPos + 30 > pageHeight - footerSpace) {
+                    doc.addPage();
+                    yPos = margin + 20;
+                }
+                doc.setFontSize(12);
+                doc.setFont("helvetica", "bold");
+                doc.text("Informações Adicionais:", margin, yPos);
+                yPos += 8;
+
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "normal");
+                const maxWidthInfo = pageWidth - (2 * margin);
+                const infoLines = doc.splitTextToSize(additionalInfoText, maxWidthInfo);
+                infoLines.forEach(line => {
+                    if (yPos + 6 > pageHeight - footerSpace) {
+                        doc.addPage();
+                        yPos = margin + 20;
+                    }
+                    doc.text(line, margin, yPos);
+                    yPos += 6;
+                });
+                yPos += 9;
+            }
+
+            let formattedReportDate = '';
+            if (reportDateValue) {
+                const dateParts = reportDateValue.split('-');
+                const year = parseInt(dateParts[0]);
+                const month = parseInt(dateParts[1]) - 1;
+                const day = parseInt(dateParts[2]);
+                const monthNames = [
+                    "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+                    "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
+                ];
+                formattedReportDate = `${day} de ${monthNames[month]} de ${year}`;
+            }
+
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "bold");
+            const municipioWidth = doc.getTextWidth(municipio);
+            doc.text(municipio, margin, yPos);
+            doc.setFont("helvetica", "normal");
+            doc.text(", ", margin + municipioWidth, yPos);
+            doc.setFont("helvetica", "bold");
+            const dateWidth = doc.getTextWidth(formattedReportDate);
+            doc.text(formattedReportDate, margin + municipioWidth + doc.getTextWidth(", "), yPos);
+            doc.setFont("helvetica", "normal");
+            doc.text(",", margin + municipioWidth + doc.getTextWidth(", ") + dateWidth, yPos);
+            yPos += 15;
+
+            const addSignatures = () => {
+                const footerSpace = 45;
+                const signatureBlockHeight = 50;
+                const lastPageY = yPos;
+
+                if (lastPageY + signatureBlockHeight + footerSpace > pageHeight) {
+                    doc.addPage();
+                    yPos = margin + 20;
+                } else {
+                    yPos = lastPageY + 20;
+                }
+
+                let sigY = yPos;
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "normal");
+
+                const signatureLineLength = 70;
+                const spacingBetweenSignatures = 20;
+                const textOffset = 5;
+
+                const totalWidth = (signatureLineLength * 2) + spacingBetweenSignatures;
+                const startX = (pageWidth - totalWidth) / 2;
+
+                doc.setDrawColor(0, 0, 0);
+                doc.line(startX, sigY + 10, startX + signatureLineLength, sigY + 10);
+                doc.text(landlord || "LOCADOR", startX + signatureLineLength / 2, sigY + 10 + textOffset, { align: "center" });
+
+                const tenantX = startX + signatureLineLength + spacingBetweenSignatures;
+                doc.setDrawColor(0, 0, 0);
+                doc.line(tenantX, sigY + 10, tenantX + signatureLineLength, sigY + 10);
+                doc.text(tenant || "LOCATÁRIO", tenantX + signatureLineLength / 2, sigY + 10 + textOffset, { align: "center" });
+
+                sigY += 30;
+                doc.setDrawColor(0, 0, 0);
+                doc.line(pageWidth / 2 - signatureLineLength / 2, sigY + 20, pageWidth / 2 + signatureLineLength / 2, sigY + 20);
+                doc.text(brokerName || "CORRETOR", pageWidth / 2, sigY + 20 + textOffset, { align: "center" });
+            };
+
+            addSignatures();
+
+            const addFooter = () => {
+    const pageCount = doc.internal.getNumberOfPages();
+    const footerY = pageHeight - 12;
+
+    for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(100);
+
+        const companyInfo = [
+            'RE/MAX Litorânea',
+            'Rua Direta de Jauá, Loja 4, Jauá, Camaçari, Bahia, CEP: 42828-576',
+            'Telefone: (71) 3672-1664 | E-mail: litoranea@remax.com.br'
+        ];
+
+        let leftY = footerY - 8;
+        companyInfo.forEach((line, index) => {
+            doc.setFont("helvetica", index === 0 ? "bold" : "normal");
+            doc.text(line, margin, leftY + (index * 5), { align: 'left' });
+        });
+
+        // TEXTO NOVO: Laudo de Vistoria com nomes
+        doc.setFont("helvetica", "bold");
+        const locadorName = landlordInput ? (landlordInput.value.split(' ')[0] || 'Locador') : 'Locador';
+        const locatarioName = tenantInput ? (tenantInput.value.split(' ')[0] || 'Locatario') : 'Locatario';
+        const footerText = `Laudo de Vistoria: ${locadorName} / ${locatarioName} - página ${i} de ${pageCount}`;
+        doc.text(footerText, pageWidth - margin, footerY, { align: 'right' });
+    }
+};
+
+            addFooter();
+
+            const landlordName = landlordInput ? (landlordInput.value || 'Locador').replace(/[^a-zA-Z0-9]/g, '_') : 'Locador';
+            const tenantName = tenantInput ? (tenantInput.value || 'Locatario').replace(/[^a-zA-Z0-9]/g, '_') : 'Locatario';
+            const fileName = `LAUDO_DE_VISTORIA_${landlordName}_${tenantName}.pdf`;
+            doc.save(fileName);
+        }
+
+        function dataURLToBlob(dataURL) {
+            const byteString = atob(dataURL.split(',')[1]);
+            const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([ab], { type: mimeString });
+        }
+
+        async function savePhotosToZip() {
+            if (inspectionItems.length === 0 && damageItems.length === 0) {
+                showMessage('Não há fotos para salvar. Adicione itens ou danos com fotos primeiro.');
+                return;
+            }
+
+            const zip = new JSZip();
+            const itensFolder = zip.folder("1_ITENS");
+            const danosFolder = zip.folder("2_DANOS");
+            let hasPhotos = false;
+
+            for (let i = 0; i < inspectionItems.length; i++) {
+                const item = inspectionItems[i];
+                if (item.photo && item.photo !== '') {
+                    hasPhotos = true;
+                    const safeDescription = (item.description || `foto_${i + 1}`).replace(/[^a-zA-Z0-9À-ÿ\s]/g, '').substring(0, 50);
+                    const fileName = `${i + 1}_${safeDescription}.png`;
+                    const blob = dataURLToBlob(item.photo);
+                    itensFolder.file(fileName, blob);
+                }
+            }
+
+            for (let i = 0; i < damageItems.length; i++) {
+                const item = damageItems[i];
+                if (item.photo && item.photo !== '') {
+                    hasPhotos = true;
+                    const safeDescription = (item.description || `foto_${i + 1}`).replace(/[^a-zA-Z0-9À-ÿ\s]/g, '').substring(0, 50);
+                    const fileName = `${i + 1}_${safeDescription}.png`;
+                    const blob = dataURLToBlob(item.photo);
+                    danosFolder.file(fileName, blob);
+                }
+            }
+
+            if (!hasPhotos) {
+                showMessage('Não há fotos para salvar. Adicione fotos aos itens ou danos primeiro.');
+                return;
+            }
+
+            try {
+                const content = await zip.generateAsync({ type: "blob" });
+                const now = new Date();
+                const dateStr = now.toISOString().split('T')[0];
+                saveAs(content, `FOTOS_VISTORIA_${dateStr}.zip`);
+            } catch (error) {
+                console.error('Erro ao gerar ZIP:', error);
+                showMessage('Erro ao gerar arquivo ZIP. Tente novamente.');
+            }
+        }
+
+        function selectCondition(clickedButton) {
+            const allButtons = document.querySelectorAll('.ConditionButtons button');
+            allButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+            clickedButton.classList.add('active');
+            selectedPropertyCondition = clickedButton.getAttribute('data-condition');
+        }
+
+        function getPropertyConditionForPDF() {
+            if (!selectedPropertyCondition) {
+                return 'Não informado';
+            }
+            const conditionMap = {
+                'novo': 'Novo',
+                'excelente': 'Excelente',
+                'bom': 'Bom',
+                'regular': 'Regular',
+                'ruim': 'Ruim'
+            };
+            return conditionMap[selectedPropertyCondition] || 'Não informado';
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicialização dos elementos do DOM
+            reportDateInput = document.getElementById('reportDate');
+            cpfInput = document.getElementById('cpf');
+
+            // NOVOS elementos para cards
+            selectPhotoInspectionInput = document.getElementById('selectPhotoInspection');
+            triggerSelectPhotoInspectionButton = document.getElementById('triggerSelectPhotoInspection');
+            inspectionCardsContainer = document.getElementById('inspectionCardsContainer');
+            noInspectionPhotos = document.getElementById('noInspectionPhotos');
+
+            selectPhotoDamageInput = document.getElementById('selectPhotoDamage');
+            triggerSelectPhotoDamageButton = document.getElementById('triggerSelectPhotoDamage');
+            damageCardsContainer = document.getElementById('damageCardsContainer');
+            noDamagePhotos = document.getElementById('noDamagePhotos');
+
+            brokerNameInput = document.getElementById('brokerName');
+            creciInput = document.getElementById('creci');
+            propertyTypeSelect = document.getElementById('propertyType');
+            destinationSelect = document.getElementById('destination');
+            propertyAddressTextarea = document.getElementById('propertyAddress');
+            landlordInput = document.getElementById('landlord');
+            tenantInput = document.getElementById('tenant');
+            contractDateInput = document.getElementById('contractDate');
+            generatePdfButton = document.getElementById('generatePdf');
+            importVistoriaButton = document.getElementById('importVistoriaButton');
+            importVistoriaInput = document.getElementById('importVistoriaInput');
+            pdfCompressionLevelSelect = document.getElementById('pdfCompressionLevel');
+            additionalInfoTextarea = document.getElementById('additionalInfo');
+            reportTypeRadios = document.querySelectorAll('input[name="reportType"]');
+            vistoriaComplementarCheckbox = document.getElementById('vistoriaComplementar');
+
+            estadoSelect = document.getElementById('estadoSelect');
+            municipioSelect = document.getElementById('municipioSelect');
+
+            cameraModal = document.getElementById('cameraModal');
+            cameraFeed = document.getElementById('cameraFeed');
+            cameraCanvas = document.getElementById('cameraCanvas');
+            takePhotoButton = document.getElementById('takePhoto');
+            cancelCameraButton = document.getElementById('cancelCamera');
+            cameraModalCloseButton = document.getElementById('cameraModalClose');
+            cameraErrorMessage = document.getElementById('cameraErrorMessage');
+
+            messageBox = document.getElementById('messageBox');
+            messageText = document.getElementById('messageText');
+            closeMessageBoxButton = document.getElementById('closeMessageBox');
+
+            // Renderizar cards iniciais (vazios)
+            renderInspectionItems();
+            renderDamageItems();
+
+            // Carregar dados de estados e municípios
+            loadLocationData();
+
+            // Configurar restrições de data (máximo = hoje)
+            setupDateRestrictions();
+
+            // Event listener para quando o estado mudar
+            if (estadoSelect) {
+                estadoSelect.addEventListener('change', (e) => {
+                    updateMunicipiosSelect(e.target.value);
+                });
+            }
+
+            // Máscara CPF
+            if (cpfInput) {
+                cpfInput.addEventListener('input', (e) => {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 9) {
+                        value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4');
+                    } else if (value.length > 6) {
+                        value = value.replace(/^(\d{3})(\d{3})(\d{3})$/, '$1.$2.$3');
+                    } else if (value.length > 3) {
+                        value = value.replace(/^(\d{3})(\d{3})$/, '$1.$2');
+                    }
+                    e.target.value = value;
+                });
+            }
+
+            // NOVOS Event Listeners para Câmera e Galeria - ITENS DA VISTORIA
+            const openCameraInspectionButton = document.getElementById('openCameraInspection');
+            if (openCameraInspectionButton) {
+                openCameraInspectionButton.addEventListener('click', () => {
+                    openCamera('inspection');
+                });
+            }
+
+            if (triggerSelectPhotoInspectionButton) {
+                triggerSelectPhotoInspectionButton.addEventListener('click', () => {
+                    selectPhotoInspectionInput.click();
+                });
+            }
+
+            if (selectPhotoInspectionInput) {
+                selectPhotoInspectionInput.addEventListener('change', (e) => handleFileSelect(e, 'inspection'));
+            }
+
+            // NOVOS Event Listeners para Câmera e Galeria - DANOS ENCONTRADOS
+            const openCameraDamageButton = document.getElementById('openCameraDamage');
+            if (openCameraDamageButton) {
+                openCameraDamageButton.addEventListener('click', () => {
+                    openCamera('damage');
+                });
+            }
+
+            if (triggerSelectPhotoDamageButton) {
+                triggerSelectPhotoDamageButton.addEventListener('click', () => {
+                    selectPhotoDamageInput.click();
+                });
+            }
+
+            if (selectPhotoDamageInput) {
+                selectPhotoDamageInput.addEventListener('change', (e) => handleFileSelect(e, 'damage'));
+            }
+
+            // Modal da câmera
+            if (takePhotoButton) takePhotoButton.addEventListener('click', takePhoto);
+            if (cancelCameraButton) cancelCameraButton.addEventListener('click', closeCameraModal);
+            if (cameraModalCloseButton) cameraModalCloseButton.addEventListener('click', closeCameraModal);
+
+            if (window && cameraModal) {
+                window.addEventListener('click', (event) => {
+                    if (event.target == cameraModal) {
+                        closeCameraModal();
+                    }
+                });
+            }
+
+            if (generatePdfButton) generatePdfButton.addEventListener('click', generatePDF);
+
+            if (importVistoriaButton && importVistoriaInput) {
+                importVistoriaButton.addEventListener('click', () => importVistoriaInput.click());
+                importVistoriaInput.addEventListener('change', (e) => {
+                    const file = e.target.files && e.target.files[0];
+                    e.target.value = ''; // permite selecionar o mesmo arquivo novamente
+                    if (file) {
+                        importVistoriaFromPDF(file);
+                    }
+                });
+            }
+
+            const savePhotosButton = document.getElementById('savePhotos');
+            if (savePhotosButton) savePhotosButton.addEventListener('click', savePhotosToZip);
+
+            if (closeMessageBoxButton) closeMessageBoxButton.addEventListener('click', closeMessageBox);
+
+            // Inicializar botões de condição do imóvel
+            const conditionButtons = document.querySelectorAll('.ConditionButtons button');
+            conditionButtons.forEach(button => {
+                button.addEventListener('click', () => selectCondition(button));
+            });
+        });
+
+        // Função para definir data máxima nos inputs de data
+        function setupDateRestrictions() {
+            const today = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
+
+            // Aplicar a todas as inputs de data
+            const dateInputs = document.querySelectorAll('input[type="date"]');
+            dateInputs.forEach(input => {
+                input.setAttribute('max', today);
+            });
+        }
+
+    </script>
+</body>
+
+</html>
