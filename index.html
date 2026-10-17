@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RE/MAX Litorânea · Sistemas</title>
+<title>Sistemas RE/MAX Litorânea</title>
 <link rel="icon" type="image/x-icon" href="assets/LogoBalao.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -292,14 +292,14 @@ const LOGO_URL = 'assets/LogoLitoranea.png';
 const SISTEMAS = [
   {
     id: 'documentos',
-    nome: 'Gerador de Documentos',
+    nome: 'Documentos',
     desc: 'Gera em Word os contratos de locação e de compra e venda.',
     url: 'documentos/index.html',
     icone: 'documento'
   },
   {
     id: 'vistoria',
-    nome: 'Sistema de Vistoria',
+    nome: 'Vistoria',
     desc: 'Cria e importa laudos de vistoria de imóveis.',
     url: 'vistoria/index.html',
     icone: 'vistoria'
@@ -425,7 +425,7 @@ function ir(id, { atualizaHash = true } = {}) {
   }
 
   $('#headerTitle').textContent = sistema ? sistema.nome : 'Sistemas da imobiliária';
-  document.title = (sistema ? sistema.nome + ' · ' : '') + 'RE/MAX Litorânea';
+  document.title = (sistema ? sistema.nome + ' · ' : '') + 'Sistemas RE/MAX Litorânea';
   if (atualizaHash && location.hash !== '#' + id) history.replaceState(null, '', '#' + id);
   if (isMobile()) fecharMobile();
 }
