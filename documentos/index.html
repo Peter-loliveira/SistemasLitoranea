@@ -7208,9 +7208,16 @@ https://github.com/nodeca/pako/blob/main/LICENSE
             {
               id: "corretor",
               l: "Corretor(a) de imóveis",
-              span: 12,
+              span: 8,
               def: "Peter Lange Oliveira",
               req: 1,
+            },
+            {
+              id: "c_creci",
+              l: "CRECI do(a) corretor(a)",
+              span: 4,
+              req: 1,
+              ph: "Ex.: CRECI-BA 00000",
             },
           ],
         ],
@@ -7851,6 +7858,46 @@ https://github.com/nodeca/pako/blob/main/LICENSE
           L("CPF:", cpf)
         );
       }
+      // Corrige o modelo de ALUGUEL: tira quebras de página fixas e parágrafos de preenchimento (causavam espaços em branco)
+      function ajustarLayout(xml){
+        // 1) Todas as quebras de seção passam a ser contínuas (sem forçar nova página)
+        let n=0;
+        xml=xml.replace(/<w:sectPr\b[\s\S]*?<\/w:sectPr>/g,s=>{
+          n++;
+          if(!/<w:type /.test(s))s=s.replace('<w:pgSz','<w:type w:val="continuous"/><w:pgSz');
+          s=s.replace(/<w:pgNumType [^>]*\/>/,'');
+          s=s.replace(/<w:cols w:num="2"[\s\S]*?<\/w:cols>/,'<w:cols w:space="720"/>');
+          if(n>1)s=s.replace(/<w:pgMar [^>]*\/>/,'<w:pgMar w:top="960" w:right="850" w:bottom="1220" w:left="708" w:header="0" w:footer="989" w:gutter="0"/>');
+          else s=s.replace('w:bottom="440"','w:bottom="1220"');
+          return s;
+        });
+        // 2) Títulos de cláusula não ficam sozinhos no fim da página
+        xml=xml.replace(/<w:p(?:\s[^>]*)?>(?:(?!<\/w:p>)[\s\S])*<\/w:p>/g,p=>{
+          const t=p.replace(/<[^>]+>/g,'').trim();
+          if(/^CLÁUSULA\s/.test(t)&&!/<w:keepNext/.test(p))return p.replace(/(<w:pStyle [^>]*\/>)/,'$1<w:keepNext/>');
+          return p;
+        });
+        // 3) Barras vermelhas ancoradas na página: fixa na 1ª página, qualquer que seja o tamanho do texto
+        const g7=xml.indexOf('name="Graphic 7"'),g8=xml.indexOf('name="Graphic 8"');
+        if(g7>0&&g8>0){
+          const rs=xml.lastIndexOf('<w:r>',g7),re=xml.indexOf('</w:r>',g8)+6;
+          const run=xml.slice(rs,re);
+          xml=xml.slice(0,rs)+xml.slice(re);
+          const fp=xml.indexOf('</w:p>',xml.indexOf('<w:body>'));
+          xml=xml.slice(0,fp)+run+xml.slice(fp);
+        }
+        // 4) Remove os parágrafos vazios de fonte grande (22 pt) que serviam só para empurrar o texto para a página 2
+        xml=xml.replace(/<w:p(?:\s[^>]*)?>(?:(?!<\/w:p>)[\s\S])*<\/w:p>/g,p=>{
+          if(/<w:sz w:val="44"\/>/.test(p)&&!/<w:t[ >]|<w:drawing|<w:pict|<w:sectPr|<w:br|<w:tab\/>/.test(p))return '';
+          return p;
+        });
+        // Títulos montados em 2 colunas viram coluna única (a quebra de coluna sumiu junto)
+        xml=xml.replace(/<w:br w:type="column"\/>/g,'');
+        // 5) Respiro entre o bloco da imobiliária e o início do texto do contrato
+        xml=xml.replace('<w:pPr><w:pStyle w:val="Corpodetexto"/><w:ind w:left="369"/></w:pPr><w:r><w:t>As</w:t></w:r>','<w:pPr><w:pStyle w:val="Corpodetexto"/><w:spacing w:before="360"/><w:ind w:left="369"/></w:pPr><w:r><w:t>As</w:t></w:r>');
+        return xml;
+      }
+
       async function gerar() {
         try {
           if (!validar()) return;
@@ -7969,6 +8016,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
           T.gar_3 = G[2];
           const zip = await JSZip.loadAsync(TPL, { base64: true });
           let xml = await zip.file("word/document.xml").async("string");
+          xml = ajustarLayout(xml);
           xml = xml.replace(/\{\{(\w+)\}\}/g, (m, k) => {
             if (!(k in T)) console.warn("token sem valor", k);
             return esc(T[k] ?? "");
@@ -7980,7 +8028,8 @@ https://github.com/nodeca/pako/blob/main/LICENSE
             P("Endereço:", V("i_end")) +
             (V("i_tel") ? P("Telefone:", V("i_tel")) : "") +
             (V("i_mail") ? P("E-mail:", V("i_mail")) : "") +
-            P("Corretor(a) de Imóveis:", V("corretor"));
+            P("Corretor(a) de Imóveis:", V("corretor")) +
+            P("CRECI do Corretor(a):", V("c_creci"));
           const R = {
             "@@OWNERS@@": qual(ow, "LOCADOR(A)"),
             "@@TENANTS@@": qual(te, "LOCATÁRIO(A)"),
@@ -8191,6 +8240,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
           i_tel: g2(/Telefone\s*:\s*(\+?[\d()\s.-]{8,})/i),
           i_mail: g2(/E-?mail\s*:\s*(\S+@\S+)/i),
           corretor: g2(/Corretor\(a\) de Im[óo]veis\s*:\s*(.+)$/im),
+          c_creci: g2(/CRECI do Corretor\(a\)\s*:\s*(.+)$/im),
         });
         // imóvel
         const p11 = P(/OBJETO o im[óo]vel/);
