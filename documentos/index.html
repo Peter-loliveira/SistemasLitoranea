@@ -177,7 +177,8 @@
       input[type="file"] {
         display: none;
       }
-      #imp {
+      #imp,
+      .impbox {
         background: #fff;
         border: 1px solid var(--line);
         border-left: 4px solid var(--red);
@@ -186,7 +187,8 @@
         margin-bottom: 16px;
         font-size: 14px;
       }
-      #imp[hidden] {
+      #imp[hidden],
+      .impbox[hidden] {
         display: none;
       }
       .grid {
@@ -11103,6 +11105,11 @@ https://github.com/nodeca/pako/blob/main/LICENSE
           const body = renderBody(fam, c);
           xml = xml.replace("@@BODY@@", () => body);
           zip.file("word/document.xml", xml);
+          try {
+            if (window.RXS) await window.RXS.embed(zip, "venda", window.RXS.vSnap());
+          } catch (e) {
+            console.warn("não foi possível gravar a cópia dos dados", e);
+          }
           const blob = await zip.generateAsync({
             type: "blob",
             mimeType:
@@ -11318,7 +11325,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
       function rpBuild() {
         const root = $("#app_rep");
         root.innerHTML =
-          '<div class="tools"><button type="button" class="btn line" id="rpExp">Expandir tudo</button><button type="button" class="btn line" id="rpCol">Recolher tudo</button></div>' +
+          '<div class="tools"><button type="button" class="btn red" id="rpImpBtn">📂 Importar contrato existente (.docx)</button><input type="file" id="rpImpFile" accept=".docx"><button type="button" class="btn line" id="rpExp">Expandir tudo</button><button type="button" class="btn line" id="rpCol">Recolher tudo</button></div><div id="rp_imp" class="impbox" hidden></div>' +
           rpSecoes()
             .map((s) => {
               const g =
@@ -11329,6 +11336,12 @@ https://github.com/nodeca/pako/blob/main/LICENSE
             })
             .join("");
         rpAddParty();
+        $("#rpImpBtn").onclick = () => $("#rpImpFile").click();
+        $("#rpImpFile").onchange = async (e) => {
+          const f = e.target.files[0];
+          e.target.value = "";
+          if (f) await rpImportar(f);
+        };
         $("#rpAdd").onclick = () => rpAddParty();
         $("#rpExp").onclick = () => $$("#app_rep .sec").forEach((d) => (d.open = true));
         $("#rpCol").onclick = () => $$("#app_rep .sec").forEach((d) => (d.open = false));
@@ -11401,6 +11414,155 @@ https://github.com/nodeca/pako/blob/main/LICENSE
           return false;
         }
         return true;
+      }
+
+
+      /* ---------- importar contrato existente ---------- */
+      function rpSnap() {
+        const g = (k) => rv(k);
+        return {
+          modo: g("rpmodo"),
+          cont: rpCards().map((c) =>
+            Object.fromEntries([...c.querySelectorAll("[data-k]")].map((i) => [i.dataset.k, i.value.trim()])),
+          ),
+          corr: [g("rpcnome"), g("rpccpf"), g("rpcreci")],
+          imv: {
+            tipo: g("rpimtipo"), arc: g("rparc"), art: g("rpart"), end: g("rpimend"), mat: g("rpmat"),
+            cart: g("rpimcart"), insc: g("rpinsc"), desc: g("rpdesc"), vvenda: g("rpvvenda"), valug: g("rpvalug"),
+          },
+          prazo: g("rpprazo"), honv: g("rphonv"), hona: g("rphona"), cidade: g("rpcidade"), data: g("rpdata"),
+          test: [[g("rpt1n"), g("rpt1c")], [g("rpt2n"), g("rpt2c")]],
+        };
+      }
+      function rpApply(R) {
+        if (!$("#app_rep").children.length) rpBuild();
+        const sv = (k, v) => {
+          const e = $("#r_" + k);
+          if (!e || v == null) return;
+          if (e.tagName == "SELECT" && ![...e.options].some((o) => o.value == v)) return;
+          e.value = v;
+          e.dispatchEvent(new Event("input", { bubbles: true }));
+        };
+        sv("rpmodo", R.modo || "venda");
+        rpCards().forEach((c) => c.remove());
+        (R.cont && R.cont.length ? R.cont : [{}]).forEach((d) => {
+          const c = rpAddParty();
+          Object.entries(d).forEach(([k, v]) => {
+            const e = c.querySelector("[data-k=" + k + "]");
+            if (!e) return;
+            if (e.tagName == "SELECT" && ![...e.options].some((o) => o.value == v)) return;
+            e.value = v;
+          });
+        });
+        rpRenum();
+        const [n, cpf, cr] = R.corr || ["", "", ""];
+        $("#r_rpcorr").value = REP_CORRETORES.some((x) => x[0] == n) ? n : "__outro";
+        sv("rpcnome", n); sv("rpccpf", cpf); sv("rpcreci", cr);
+        const im = R.imv || {};
+        [["rpimtipo", "tipo"], ["rparc", "arc"], ["rpart", "art"], ["rpimend", "end"], ["rpmat", "mat"],
+         ["rpimcart", "cart"], ["rpinsc", "insc"], ["rpdesc", "desc"], ["rpvvenda", "vvenda"], ["rpvalug", "valug"]]
+          .forEach(([k, i]) => sv(k, im[i]));
+        sv("rpprazo", R.prazo); sv("rphonv", R.honv); sv("rphona", R.hona);
+        sv("rpcidade", R.cidade); sv("rpdata", R.data);
+        const t = R.test || [];
+        sv("rpt1n", (t[0] || [])[0]); sv("rpt1c", (t[0] || [])[1]);
+        sv("rpt2n", (t[1] || [])[0]); sv("rpt2c", (t[1] || [])[1]);
+        rpModo();
+        $$("#app_rep .party").forEach((c) => (c.open = true));
+      }
+      /* contratos sem a cópia dos dados: lê as tabelas e o texto */
+      function rpLegacy(info) {
+        const X = window.RXS, nrm = X.nrm, nz = X.nz;
+        const R = { modo: "venda", cont: [], corr: ["", "", ""], imv: {}, prazo: "", honv: "", hona: "", cidade: "", data: "", test: [["", ""], ["", ""]] };
+        const mapP = { nacionalidade: "nac", "estado civil": "ec", profissao: "prof", cpf: "cpf", endereco: "end", telefone: "tel", "e-mail": "email", email: "email" };
+        const mapI = { "area construida": "arc", "area total": "art", endereco: "end", matricula: "mat", cartorio: "cart", "inscricao municipal": "insc", descricao: "desc" };
+        let g = null, mode = "";
+        const grupos = [];
+        info.tables.forEach((t) =>
+          t.rows.forEach((r) => {
+            if (!r[0]) return;
+            const k = nrm(r[0]), v = nz(r.slice(1).join(" "));
+            if (k == "nome") { g = { kind: "?", d: { nome: v } }; grupos.push(g); mode = "g"; }
+            else if (k == "cnpj" && g) g.kind = "imob";
+            else if (k == "nacionalidade" && g) { g.kind = "p"; g.d.nac = v; }
+            else if (k.startsWith("corretor")) { mode = "corr"; R.corr[0] = v; }
+            else if (k == "tipo") { mode = "imv"; R.imv.tipo = v; }
+            else if (mode == "g" && g && g.kind == "p" && k == "rg") Object.assign(g.d, X.rgSplit(v));
+            else if (mode == "g" && g && g.kind == "p" && mapP[k]) g.d[mapP[k]] = k == "telefone" ? v.replace(/^\+?\s*55\s*/, "") : v;
+            else if (mode == "corr") { if (k == "cpf") R.corr[1] = v; else if (k.startsWith("creci")) R.corr[2] = v; }
+            else if (mode == "imv") {
+              if (mapI[k]) R.imv[mapI[k]] = v.replace(/m²/gi, "").trim();
+              else if (k == "valor de venda" || k == "valor") R.imv.vvenda = X.dinheiro(v);
+              else if (k == "valor do aluguel") R.imv.valug = X.dinheiro(v);
+            }
+          }),
+        );
+        R.cont = grupos.filter((x) => x.kind == "p").map((x) => x.d);
+        const P = info.paras;
+        R.modo = R.imv.vvenda && R.imv.valug ? "ambos" : R.imv.valug ? "aluguel" : "venda";
+        const pz = P.map((p) => /prazo de\s+(\d+)\s*\(/.exec(p)).find(Boolean);
+        if (pz) R.prazo = pz[1];
+        const rem = P.find((p) => /uma remuneração correspondente a/.test(p));
+        if (rem) {
+          const dep = rem.split(/correspondente a\s+/)[1] || "";
+          if (/valor bruto de venda/.test(dep)) {
+            R.honv = dep.split(/\s+do valor bruto de venda/)[0].trim();
+            const l = dep.split(/em caso de locação do imóvel,\s*/)[1];
+            if (l) R.hona = l.replace(/\.\s*$/, "").trim();
+          } else R.hona = dep.replace(/\.\s*$/, "").trim();
+        }
+        for (const p of P) {
+          const m = /(\S[^,]*?)\/BA,\s*(\d{1,2}) de ([^\s]+) de (\d{4})/.exec(p);
+          if (m) { R.cidade = m[1].trim(); R.data = X.dataIso(m[2], m[3], m[4]); break; }
+        }
+        let ti = 0;
+        P.forEach((p, i) => {
+          if (p == "TESTEMUNHA" && ti < 2) {
+            const n = /^Nome:\s*(.+)$/.exec(P[i + 1] || ""), c = /^CPF:\s*(.+)$/.exec(P[i + 2] || "");
+            R.test[ti] = [n ? n[1].trim() : "", c ? c[1].trim() : ""];
+            ti++;
+          }
+        });
+        const miss = [];
+        if (!R.cont.length) miss.push("contratante(s)");
+        if (!R.corr[0]) miss.push("corretor(a)");
+        if (!R.imv.tipo) miss.push("dados do imóvel");
+        if (!R.prazo) miss.push("prazo");
+        if (R.modo != "aluguel" && !R.honv) miss.push("honorários da venda");
+        if (R.modo != "venda" && !R.hona) miss.push("honorários do aluguel");
+        return { R, miss };
+      }
+      async function rpImportar(file) {
+        const X = window.RXS, box = $("#rp_imp");
+        try {
+          msg("Lendo o contrato…");
+          const zip = await JSZip.loadAsync(await file.arrayBuffer());
+          const snap = await X.read(zip);
+          if (snap && snap.tipo != "representacao")
+            throw new Error("este arquivo é um contrato de " + (X.NOMES[snap.tipo] || snap.tipo) + ". Importe-o na opção correspondente.");
+          let miss = [];
+          if (snap) rpApply(snap.dados);
+          else {
+            const info = await X.docInfo(zip);
+            const t = info.paras.slice(0, 6).join(" ").toUpperCase();
+            if (/COMPRA E VENDA|LOCA[ÇC][ÃA]O DE IM/.test(t) && !/REPRESENTA/.test(t))
+              throw new Error("este arquivo não é um contrato de representação imobiliária. Importe-o na opção correspondente.");
+            const r = rpLegacy(info);
+            if (!r.R.cont.length && !r.R.imv.tipo) throw new Error("este arquivo não parece um contrato de representação no formato do modelo");
+            rpApply(r.R);
+            miss = r.miss;
+          }
+          msg("");
+          X.caixa(
+            box,
+            "<b>✔ Contrato importado:</b> " + esc(file.name) + " — " + rpCards().length + " contratante(s).<br>" +
+              (miss.length ? '<span style="color:var(--red)"><b>Não consegui identificar:</b> ' + miss.map(esc).join("; ") + ".</span><br>" : "") +
+              "Revise todos os campos e clique em “Gerar contrato”.",
+          );
+        } catch (err) {
+          console.error(err);
+          msg("Não foi possível importar: " + err.message, "bad");
+        }
       }
 
       /* ---------- manipulação do modelo (.docx) ---------- */
@@ -11731,6 +11893,11 @@ https://github.com/nodeca/pako/blob/main/LICENSE
           if (!out.startsWith("<?xml"))
             out = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' + out;
           zip.file("word/document.xml", out);
+          try {
+            await window.RXS.embed(zip, "representacao", rpSnap());
+          } catch (e) {
+            console.warn("não foi possível gravar a cópia dos dados", e);
+          }
           const blob = await zip.generateAsync({
             type: "blob",
             mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -11770,6 +11937,364 @@ https://github.com/nodeca/pako/blob/main/LICENSE
         $("#go").onclick = (e) =>
           sel.value == "representacao" ? gerarRep() : prevGo && prevGo.call($("#go"), e);
       })();
+      })();
+    </script>
+    <script>
+      /* ============ MÓDULO IMPORTAR CONTRATO EXISTENTE (VENDA e REPRESENTAÇÃO) ============
+         Os contratos gerados daqui em diante guardam, dentro do próprio .docx, uma cópia dos
+         dados preenchidos (parte "customXml"). Ao importar, o sistema restaura tudo exatamente.
+         Contratos mais antigos (sem essa cópia) são lidos pelo texto: recupera o que der. */
+      (() => {
+        const NS = "urn:remax-litoranea:dados";
+        const WN = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+        const enc = (o) => btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+        const dec = (s) => JSON.parse(decodeURIComponent(escape(atob(s))));
+        const NOMES = { venda: "venda", representacao: "representação imobiliária", aluguel: "aluguel" };
+
+        async function embed(zip, tipo, dados) {
+          const X = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+          zip.file("customXml/remax-dados.xml", X + '<remaxDados xmlns="' + NS + '">' + enc({ v: 1, tipo, dados }) + "</remaxDados>");
+          zip.file(
+            "customXml/remax-dadosProps.xml",
+            X +
+              '<ds:datastoreItem ds:itemID="{8F3C2A55-7B1D-4E27-9C61-5A0D2E41B7F3}" xmlns:ds="http://schemas.openxmlformats.org/officeDocument/2006/customXml"><ds:schemaRefs><ds:schemaRef ds:uri="' +
+              NS +
+              '"/></ds:schemaRefs></ds:datastoreItem>',
+          );
+          zip.file(
+            "customXml/_rels/remax-dados.xml.rels",
+            X +
+              '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/customXmlProps" Target="remax-dadosProps.xml"/></Relationships>',
+          );
+          let rels = await zip.file("word/_rels/document.xml.rels").async("string");
+          if (!rels.includes("remax-dados.xml"))
+            rels = rels.replace(
+              "</Relationships>",
+              '<Relationship Id="rIdRemaxDados" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/customXml" Target="../customXml/remax-dados.xml"/></Relationships>',
+            );
+          zip.file("word/_rels/document.xml.rels", rels);
+          let ct = await zip.file("[Content_Types].xml").async("string");
+          if (!ct.includes("remax-dadosProps"))
+            ct = ct.replace(
+              "</Types>",
+              '<Override PartName="/customXml/remax-dadosProps.xml" ContentType="application/vnd.openxmlformats-officedocument.customXmlProperties+xml"/></Types>',
+            );
+          zip.file("[Content_Types].xml", ct);
+        }
+        async function read(zip) {
+          for (const name of Object.keys(zip.files)) {
+            if (!/^customXml\/[^\/]+\.xml$/.test(name) || /props/i.test(name)) continue;
+            const t = await zip.file(name).async("string");
+            if (!t.includes(NS)) continue;
+            try {
+              const d = new DOMParser().parseFromString(t, "application/xml");
+              return dec(d.documentElement.textContent.trim());
+            } catch (e) {}
+          }
+          return null;
+        }
+        /* lê parágrafos e tabelas (linha a linha) do .docx */
+        async function docInfo(zip) {
+          const f = zip.file("word/document.xml");
+          if (!f) throw new Error("o arquivo não é um .docx válido");
+          const xml = new DOMParser().parseFromString(await f.async("string"), "application/xml");
+          const inFallback = (n) => {
+            while ((n = n.parentNode) && n.nodeType == 1) if (n.localName == "Fallback") return true;
+            return false;
+          };
+          const ptxt = (p) => {
+            let s = "";
+            for (const n of p.getElementsByTagNameNS(WN, "*")) {
+              if (n.localName == "t" && !inFallback(n)) s += n.textContent;
+              else if (n.localName == "tab") s += " ";
+            }
+            return s.replace(/\s+/g, " ").trim();
+          };
+          const ctxt = (c) => [...c.getElementsByTagNameNS(WN, "p")].map(ptxt).join(" ").replace(/\s+/g, " ").trim();
+          const body = xml.getElementsByTagNameNS(WN, "body")[0];
+          const tables = [],
+            paras = [];
+          let head = "";
+          (function walk(node) {
+            for (const c of node.children) {
+              const l = c.localName;
+              if (l == "tbl") {
+                const rows = [...c.children]
+                  .filter((x) => x.localName == "tr")
+                  .map((tr) => {
+                    const cells = [];
+                    (function cc(n) {
+                      for (const x of n.children) {
+                        if (x.localName == "tc") cells.push(ctxt(x));
+                        else if (x.localName == "sdt" || x.localName == "sdtContent") cc(x);
+                      }
+                    })(tr);
+                    return cells;
+                  });
+                tables.push({ head, rows });
+              } else if (l == "p") {
+                const t = ptxt(c);
+                if (t) {
+                  paras.push(t);
+                  if (t.length < 70) head = t;
+                }
+              } else if (l == "sdt" || l == "sdtContent") walk(c);
+            }
+          })(body);
+          return { tables, paras };
+        }
+        const nrm = (s) =>
+          String(s)
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .replace(/[:\s]+$/g, "")
+            .trim();
+        const nz = (s) => (!s || /^(n[ãa]o informado|n[ãa]o se aplica)$/i.test(String(s).trim()) ? "" : String(s).trim());
+        const dinheiro = (s) => {
+          const m = /R\$\s*([\d.]+,\d{2})/.exec(s || "");
+          return m ? m[1] : "";
+        };
+        const MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+        const dataIso = (d, mes, a) => {
+          const i = MESES.indexOf(nrm(mes).replace("marco", "março"));
+          const j = i >= 0 ? i : MESES.map(nrm).indexOf(nrm(mes));
+          return j < 0 ? "" : a + "-" + String(j + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+        };
+        const rgSplit = (v) => {
+          const m = /^(\S+)\s+(.+?)\s*\/\s*([A-Za-z]{2})$/.exec(v || "");
+          return m ? { rg: m[1], org: m[2], ufrg: m[3].toUpperCase() } : { rg: v || "", org: "", ufrg: "" };
+        };
+        const caixa = (box, html) => {
+          box.hidden = false;
+          box.innerHTML = html + ' <button type="button" class="x">fechar</button>';
+          box.querySelector(".x").onclick = () => (box.hidden = true);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        };
+        window.RXS = { embed, read, docInfo, nrm, nz, dinheiro, dataIso, rgSplit, caixa, NOMES };
+
+        /* ---------------- VENDA ---------------- */
+        function vSnap() {
+          const f = {};
+          $$("#app_venda [id^=v_]").forEach((e) => {
+            if (/^(INPUT|SELECT|TEXTAREA)$/.test(e.tagName))
+              f[e.id] = e.type == "checkbox" || e.type == "radio" ? e.checked : e.value;
+          });
+          const cs = (s) => $$(s).map(dataOf);
+          return {
+            f,
+            vend: cs("#v_l_vend .party"),
+            comp: cs("#v_l_comp .party"),
+            conj: cs("#v_l_conj .party"),
+            pay: cs("#v_l_pay .party"),
+            ent: dataOf($("#v_l_ent .party")),
+            fgts: dataOf($("#v_l_fgts .party")),
+            fin: dataOf($("#v_l_fin .party")),
+            orig: dataOf($("#v_bk_o .vbank")),
+            dest: cs("#v_l_dest .vbank"),
+          };
+        }
+        function vRestore(S) {
+          if (!$("#app_venda").children.length) buildVenda();
+          const sv = (e, v) => {
+            if (!e) return;
+            if (e.type == "checkbox" || e.type == "radio") e.checked = !!v;
+            else if (e.tagName == "SELECT") {
+              if ([...e.options].some((o) => o.value == v)) e.value = v;
+            } else e.value = v == null ? "" : v;
+          };
+          const fill = (c, d) => {
+            if (!c || !d) return;
+            Object.entries(d).forEach(([k, v]) => sv(c.querySelector("[data-k=" + k + "]"), v));
+          };
+          ["vend", "comp", "conj"].forEach((k) => {
+            if (!S[k]) return;
+            cardsOf(k).forEach((c) => c.remove());
+            const n = Math.max(S[k].length, k == "conj" ? 0 : 1);
+            for (let i = 0; i < n; i++) fill(vAddParty(k), S[k][i]);
+            vRenum(k);
+          });
+          if (S.pay) {
+            $$("#v_l_pay .party").forEach((c) => c.remove());
+            const n = Math.max(S.pay.length, 1);
+            for (let i = 0; i < n; i++) fill(vAddPay(), S.pay[i]);
+            vRenumPay();
+          }
+          fill($("#v_l_ent .party"), S.ent);
+          fill($("#v_l_fgts .party"), S.fgts);
+          fill($("#v_l_fin .party"), S.fin);
+          if (S.orig) fill($("#v_bk_o .vbank"), S.orig);
+          if (S.dest) {
+            $$("#v_l_dest .vbank").forEach((b) => b.remove());
+            const n = Math.max(S.dest.length, 1);
+            for (let i = 0; i < n; i++) {
+              const b = vBank("dest");
+              $("#v_l_dest").append(b);
+              fill(b, S.dest[i]);
+            }
+            vBankRn();
+          }
+          Object.entries(S.f || {}).forEach(([id, v]) => sv(document.getElementById(id), v));
+          honManual = true;
+          finManual = true;
+          const fin = finMode();
+          $("#v_pays_no").hidden = fin;
+          $("#v_pays_fin").hidden = !fin;
+          $("#v_l_fgts").hidden = !$("#v_fgts_chk").checked;
+          $$("#app_venda select, #app_venda input[type=checkbox]").forEach((e) =>
+            e.dispatchEvent(new Event("change", { bubbles: true })),
+          );
+          vRefresh();
+          $$("#app_venda .party[data-kind]").forEach((c) => (c.open = true));
+        }
+        /* contratos antigos: lê o que está nas tabelas (partes, corretor, imóvel) */
+        function vLegacy(info) {
+          const S = { vend: [], comp: [], conj: [], f: {} },
+            f = S.f;
+          const mapP = { nacionalidade: "nac", "estado civil": "ec", profissao: "prof", cpf: "cpf", rg: "rg", endereco: "end", telefone: "tel", "e-mail": "mail", email: "mail" };
+          const imv = { "area construida": "v_area_c", "area total": "v_area_t", endereco: "v_end", "inscricao municipal": "v_insc", matricula: "v_matric", descricao: "v_desc" };
+          const selOutro = (sel, other, val) => {
+            const e = $("#" + sel);
+            if ([...e.options].some((o) => o.value == val)) f[sel] = val;
+            else {
+              f[sel] = "Outro (digitar)";
+              f[other] = val;
+            }
+          };
+          let g = null,
+            mode = "",
+            corrOk = false,
+            imvOk = false;
+          const grupos = [];
+          info.tables.forEach((t) =>
+            t.rows.forEach((r) => {
+              if (!r[0]) return;
+              const k = nrm(r[0]),
+                v = nz(r.slice(1).join(" "));
+              if (k == "nome") {
+                g = { head: t.head, kind: "?", d: { nome: v } };
+                grupos.push(g);
+                mode = "g";
+              } else if (k == "cnpj" && g) g.kind = "imob";
+              else if (k == "nacionalidade" && g) {
+                g.kind = "p";
+                g.d.nac = v;
+              } else if (k.startsWith("corretor")) {
+                mode = "corr";
+                corrOk = true;
+                f.v_corr_n = v;
+              } else if (k == "tipo") {
+                mode = "imv";
+                imvOk = true;
+                selOutro("v_tipo", "v_tipo_o", v);
+              } else if (mode == "g" && g && g.kind == "p" && mapP[k]) g.d[mapP[k]] = v;
+              else if (mode == "corr") {
+                if (k == "cpf") f.v_corr_cpf = v;
+                else if (k.startsWith("creci")) f.v_corr_creci = v;
+              } else if (mode == "imv") {
+                if (imv[k]) f[imv[k]] = v.replace(/m²/gi, "").trim();
+                else if (k == "cartorio" && v) selOutro("v_cart", "v_cart_o", v);
+              }
+            }),
+          );
+          grupos
+            .filter((x) => x.kind == "p")
+            .forEach((x) => {
+              const h = nrm(x.head);
+              const kind = /compr|cession/.test(h) ? "comp" : /conjuge|anuente/.test(h) ? "conj" : "vend";
+              S[kind].push(x.d);
+            });
+          const titulo = info.paras.slice(0, 4).join(" ");
+          if (/CESS[ÃA]O/i.test(titulo)) f.v_modal = "cessao";
+          const miss = [];
+          if (!S.vend.length) miss.push("vendedor(es)");
+          if (!S.comp.length) miss.push("comprador(es)");
+          if (!corrOk) miss.push("corretor(a)");
+          if (!imvOk) miss.push("dados do imóvel");
+          miss.push("valor do imóvel e formas de pagamento", "contas bancárias", "honorários", "posse e IPTU", "data e testemunhas");
+          return { S, miss };
+        }
+        async function vImportar(file) {
+          const box = $("#v_imp");
+          try {
+            msg("Lendo o contrato…");
+            const zip = await JSZip.loadAsync(await file.arrayBuffer());
+            const snap = await read(zip);
+            if (snap && snap.tipo != "venda")
+              throw new Error("este arquivo é um contrato de " + (NOMES[snap.tipo] || snap.tipo) + ". Importe-o na opção correspondente.");
+            let miss = [];
+            if (snap) vRestore(snap.dados);
+            else {
+              const info = await docInfo(zip);
+              const t = info.paras.slice(0, 4).join(" ").toUpperCase();
+              if (/REPRESENTA/.test(t) && !/COMPRA E VENDA/.test(t))
+                throw new Error("este arquivo é um contrato de representação imobiliária. Importe-o na opção REPRESENTAÇÃO IMOBILIÁRIA.");
+              if (/LOCA[ÇC]/.test(t)) throw new Error("este arquivo é um contrato de aluguel. Importe-o na opção ALUGUEL.");
+              const r = vLegacy(info);
+              if (!r.S.vend.length && !r.S.comp.length) throw new Error("este arquivo não parece um contrato de venda no formato do modelo");
+              vRestore(r.S);
+              miss = r.miss;
+            }
+            msg("");
+            const nv = cardsOf("vend").length,
+              nc = cardsOf("comp").length;
+            caixa(
+              box,
+              "<b>✔ Contrato importado:</b> " +
+                esc(file.name) +
+                " — " +
+                nv +
+                " vendedor(es), " +
+                nc +
+                " comprador(es).<br>" +
+                (miss.length
+                  ? "Este arquivo é de uma versão anterior, que não guardava todos os dados. Recuperei o que estava nas tabelas.<br>" +
+                    '<span style="color:var(--red)"><b>Preencha:</b> ' +
+                    miss.map(esc).join("; ") +
+                    ".</span><br>"
+                  : "") +
+                "Revise todos os campos e clique em “Gerar contrato”.",
+            );
+          } catch (err) {
+            console.error(err);
+            msg("Não foi possível importar: " + err.message, "bad");
+          }
+        }
+        window.RXS.vSnap = vSnap;
+        function vUI() {
+          if ($("#vImpBtn")) return;
+          const tools = $("#app_venda .tools");
+          if (!tools) return;
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "btn red";
+          b.id = "vImpBtn";
+          b.textContent = "📂 Importar contrato existente (.docx)";
+          const fi = document.createElement("input");
+          fi.type = "file";
+          fi.accept = ".docx";
+          tools.prepend(fi);
+          tools.prepend(b);
+          const box = document.createElement("div");
+          box.id = "v_imp";
+          box.className = "impbox";
+          box.hidden = true;
+          tools.after(box);
+          b.onclick = () => fi.click();
+          fi.onchange = async (e) => {
+            const f = e.target.files[0];
+            e.target.value = "";
+            if (f) await vImportar(f);
+          };
+        }
+        const sel = $("#tipoContrato"),
+          prev = sel.onchange;
+        sel.onchange = () => {
+          if (typeof prev == "function") prev();
+          if (sel.value == "venda") vUI();
+          else if ($("#v_imp")) $("#v_imp").hidden = true;
+          if (sel.value != "representacao" && $("#rp_imp")) $("#rp_imp").hidden = true;
+        };
       })();
     </script>
   </body>
